@@ -1,0 +1,217 @@
+.hero {
+    text-align: center;
+    padding: 80px 20px;
+}
+.hero-title {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    letter-spacing: -2px;
+}
+.hero-title span {
+    color: #7C4DFF;
+}
+.hero-desc {
+    font-size: 18px;
+    color: #888;
+    margin-bottom: 40px;
+}
+.hero-search {
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+}
+.hero-search input {
+    width: 100%;
+    padding: 16px 24px;
+    background-color: #2a2a2a;
+    border: 2px solid #3a3a3a;
+    border-radius: 50px;
+    color: #ffffff;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.hero-search input:focus {
+    border-color: #7C4DFF;
+}
+.hero-search input::placeholder {
+    color: #666;
+}
+.hero-search-form {
+    width: 100%;
+}
+/* Autocomplete */
+.hero-autocomplete {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 8px;
+    background-color: #1e1e1e;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    overflow: hidden;
+    z-index: 50;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    text-align: left;
+}
+.hero-ac-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    transition: background-color 0.15s;
+}
+.hero-ac-item:hover {
+    background-color: #2a2a2a;
+}
+.hero-ac-poster {
+    width: 36px;
+    height: 54px;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #333;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #666;
+}
+.hero-ac-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.hero-ac-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+.hero-ac-meta {
+    font-size: 12px;
+    color: #888;
+    margin-top: 2px;
+}
+.welcome-section {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+.welcome-section h2 {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+.welcome-section p {
+    color: #888;
+}
+/* Content Grid */
+.home-section {
+    margin-top: 48px;
+}
+.home-section-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+}
+.content-card {
+    min-width: 0;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.content-card:hover {
+    transform: translateY(-4px);
+}
+.card-poster {
+    width: 100%;
+    height: 0;
+    padding-bottom: 150%;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    overflow: hidden;
+    color: #666;
+    font-size: 13px;
+    position: relative;
+}
+.card-poster span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.card-poster img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.card-score {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+}
+.card-score.green { background-color: #4CAF50; }
+.card-score.yellow { background-color: #FFC107; color: #333; }
+.card-score.red { background-color: #F44336; }
+.card-title {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.card-year {
+    font-size: 12px;
+    color: #888;
+    margin-top: 2px;
+}
+.card-score.tmdb-score {
+    background-color: #1a8fe3;
+}
+/* Loading */
+.loading-indicator {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+}
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid #333;
+    border-top-color: #7C4DFF;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+/* Responsive */
+@media (max-width: 1024px) {
+    .content-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 768px) {
+    .content-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+}
+@media (max-width: 480px) {
+    .content-grid { grid-template-columns: repeat(2, 1fr); }
+}

@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(brew install gradle)",
+      "Bash(gradle wrapper --gradle-version 7.6.4)",
+      "Bash(./gradlew build)",
+      "Bash(timeout 15 ./gradlew bootRun)",
+      "Bash(gtimeout 15 ./gradlew bootRun)",
+      "Bash(pkill -f \"bootRun\")",
+      "Bash(pkill -f \"GradleDaemon\")",
+      "Bash(lsof -i :8080)",
+      "Bash(./gradlew bootRun)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/h2-console)",
+      "Bash(wc -l /Users/choebowon/Desktop/my-kino/src/main/java/com/mykino/entity/*.java)",
+      "Bash(lsof -ti :8080)",
+      "Bash(xargs kill -9)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/)",
+      "Bash(curl -s -c /tmp/mykino-cookies -L -d \"email=admin@mykino.com&password=test1234\" http://localhost:8080/login -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s -b /tmp/mykino-cookies -o /dev/null -w \"\\\\n%{http_code}\" http://localhost:8080/admin/tmdb)",
+      "Bash(curl -v -c /tmp/mykino-cookies2 -d \"email=admin@mykino.com&password=test1234\" http://localhost:8080/login)",
+      "Bash(curl -s \"http://localhost:8080/h2-console\" -o /dev/null -w \"%{http_code}\")",
+      "Bash(pip3 install bcrypt)",
+      "Bash(python3 -c \":*)",
+      "Bash(curl -v -c /tmp/mykino-cookies3 -d \"email=admin@mykino.com&password=test1234\" http://localhost:8080/login)",
+      "Bash(curl -s -b /tmp/mykino-cookies3 -X POST \"http://localhost:8080/api/admin/tmdb/sync-popular?page=1\")",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s -b /tmp/mykino-cookies3 -X POST \"http://localhost:8080/api/admin/tmdb/search?keyword=%ED%8C%8C%EB%AC%98\")",
+      "Bash(curl -s http://localhost:8080/)",
+      "Bash(./gradlew build -x test)",
+      "Bash(./mvnw compile -q)",
+      "Bash(./gradlew compileJava)",
+      "Bash(curl -s \"https://api.themoviedb.org/3/watch/providers/movie?api_key=14b0b84c07459778f733e2c6ef29b309&language=ko-KR&watch_region=KR\")",
+      "Bash(curl -s \"https://api.themoviedb.org/3/watch/providers/tv?api_key=14b0b84c07459778f733e2c6ef29b309&language=ko-KR&watch_region=KR\")"
+    ],
+    "additionalDirectories": [
+      "/Users/choebowon/Desktop/my-kino/data"
+    ]
+  }
+}

@@ -1,0 +1,759 @@
+/* ==========================================
+   Content Detail Page
+   ========================================== */
+
+/* Backdrop */
+.content-backdrop {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background-color: #1a1a2e;
+    background-size: cover;
+    background-position: center top;
+    overflow: hidden;
+}
+
+.content-backdrop::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(transparent, #141414);
+}
+
+/* Hero Section (Poster + Info) */
+.content-hero {
+    max-width: 1200px;
+    margin: -120px auto 0;
+    padding: 0 20px;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    gap: 32px;
+}
+
+.content-poster {
+    width: 220px;
+    min-width: 220px;
+    height: 330px;
+    border-radius: 12px;
+    background-color: #2a2a2a;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 14px;
+}
+
+.content-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.content-info {
+    flex: 1;
+    padding-top: 130px;
+}
+
+.content-title {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 4px;
+}
+
+.content-title-eng {
+    font-size: 16px;
+    color: #888;
+    margin-bottom: 16px;
+}
+
+.content-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.meta-tag {
+    padding: 4px 12px;
+    background-color: #2a2a2a;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #ccc;
+}
+
+.content-genres {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.genre-tag {
+    padding: 6px 14px;
+    border: 1px solid #3a3a3a;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #e0e0e0;
+}
+
+/* Traffic Light Score */
+.kino-score-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.kino-badge {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.kino-badge.green {
+    background-color: #4CAF50;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+}
+
+.kino-badge.yellow {
+    background-color: #FFC107;
+    color: #333;
+    box-shadow: 0 0 20px rgba(255, 193, 7, 0.4);
+}
+
+.kino-badge.red {
+    background-color: #F44336;
+    box-shadow: 0 0 20px rgba(244, 67, 54, 0.4);
+}
+
+.kino-badge.none {
+    background-color: #555;
+}
+
+.kino-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.kino-label {
+    font-size: 13px;
+    color: #888;
+}
+
+.kino-status {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.kino-count {
+    font-size: 12px;
+    color: #666;
+    margin-top: 2px;
+}
+
+/* ==========================================
+   Content Body Sections
+   ========================================== */
+.content-body {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 20px;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+/* OTT Section */
+.ott-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+}
+
+.ott-card {
+    background-color: #1e1e1e;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.2s;
+}
+
+.ott-card:hover {
+    border-color: #7C4DFF;
+}
+
+.ott-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ott-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: #2a2a2a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: #aaa;
+    font-weight: 600;
+}
+
+.ott-name {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.ott-type {
+    font-size: 12px;
+    color: #888;
+    margin-top: 2px;
+}
+
+.ott-right {
+    text-align: right;
+}
+
+.ott-streaming {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: rgba(124, 77, 255, 0.15);
+    color: #7C4DFF;
+}
+
+.ott-price {
+    font-size: 13px;
+    color: #ccc;
+}
+
+.ott-link {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: #7C4DFF;
+}
+
+.ott-link:hover {
+    text-decoration: underline;
+}
+
+.ott-card.theater {
+    border-color: #e74c3c;
+    background-color: rgba(231, 76, 60, 0.08);
+}
+
+.ott-logo.theater {
+    background-color: #e74c3c;
+    font-size: 20px;
+    line-height: 40px;
+    text-align: center;
+}
+
+.ott-theater-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+}
+
+/* Synopsis */
+.synopsis-text {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #ccc;
+}
+
+/* Cast Section */
+.cast-list {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.cast-list::-webkit-scrollbar {
+    height: 4px;
+}
+
+.cast-list::-webkit-scrollbar-thumb {
+    background-color: #3a3a3a;
+    border-radius: 2px;
+}
+
+.cast-card {
+    min-width: 100px;
+    text-align: center;
+}
+
+.cast-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background-color: #2a2a2a;
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #666;
+}
+
+.cast-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.cast-name {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.cast-role {
+    font-size: 11px;
+    color: #888;
+}
+
+/* Director */
+.director-list {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.director-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: #1e1e1e;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+}
+
+.director-label {
+    font-size: 12px;
+    color: #888;
+}
+
+.director-name {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ==========================================
+   My Rating
+   ========================================== */
+.my-rating {
+    background-color: #1e1e1e;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+.traffic-btns {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.traffic-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    border: 2px solid #3a3a3a;
+    border-radius: 12px;
+    background: none;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+}
+
+.traffic-btn:hover {
+    border-color: #555;
+    color: #ccc;
+}
+
+.traffic-btn.red.active {
+    border-color: #F44336;
+    color: #F44336;
+    background-color: rgba(244, 67, 54, 0.1);
+}
+
+.traffic-btn.yellow.active {
+    border-color: #FFC107;
+    color: #FFC107;
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.traffic-btn.green.active {
+    border-color: #4CAF50;
+    color: #4CAF50;
+    background-color: rgba(76, 175, 80, 0.1);
+}
+
+.rating-score {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.rating-score label {
+    font-size: 14px;
+    color: #888;
+}
+
+.star-rating {
+    display: flex;
+    gap: 4px;
+}
+
+.star {
+    font-size: 28px;
+    color: #3a3a3a;
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.star.filled {
+    color: #FFC107;
+}
+
+.star.hover {
+    color: #FFD54F;
+}
+
+.score-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #FFC107;
+    min-width: 20px;
+}
+
+.rating-comment {
+    display: flex;
+    gap: 8px;
+}
+
+.rating-comment input {
+    flex: 1;
+    padding: 12px 16px;
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+}
+
+.rating-comment input:focus {
+    border-color: #7C4DFF;
+}
+
+.rating-comment input::placeholder {
+    color: #666;
+}
+
+.rating-submit-btn {
+    padding: 12px 24px;
+    background-color: #7C4DFF;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s;
+}
+
+.rating-submit-btn:hover {
+    background-color: #6E3FE8;
+}
+
+.login-prompt {
+    text-align: center;
+    padding: 24px;
+    background-color: #1e1e1e;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    color: #888;
+}
+
+.login-prompt a {
+    color: #7C4DFF;
+    font-weight: 600;
+}
+
+/* ==========================================
+   Reviews
+   ========================================== */
+.review-form {
+    background-color: #1e1e1e;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.review-form input[type="text"] {
+    width: 100%;
+    padding: 10px 14px;
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    margin-bottom: 10px;
+}
+
+.review-form input[type="text"]:focus {
+    border-color: #7C4DFF;
+}
+
+.review-form input[type="text"]::placeholder {
+    color: #666;
+}
+
+.review-form textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    resize: vertical;
+    font-family: inherit;
+    margin-bottom: 10px;
+}
+
+.review-form textarea:focus {
+    border-color: #7C4DFF;
+}
+
+.review-form textarea::placeholder {
+    color: #666;
+}
+
+.review-form-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.spoiler-check {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #888;
+    cursor: pointer;
+}
+
+.review-submit-btn {
+    padding: 10px 20px;
+    background-color: #7C4DFF;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.review-submit-btn:hover {
+    background-color: #6E3FE8;
+}
+
+.review-card {
+    background-color: #1e1e1e;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 12px;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.review-nickname {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.review-date {
+    font-size: 12px;
+    color: #666;
+}
+
+.review-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.review-body {
+    font-size: 14px;
+    color: #ccc;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+
+.spoiler-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background-color: rgba(244, 67, 54, 0.15);
+    color: #F44336;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-right: 4px;
+}
+
+.spoiler-blur {
+    filter: blur(4px);
+    transition: filter 0.3s;
+    cursor: pointer;
+}
+
+.spoiler-blur:hover {
+    filter: none;
+}
+
+.review-footer {
+    display: flex;
+    align-items: center;
+}
+
+.review-like-btn {
+    background: none;
+    border: 1px solid #3a3a3a;
+    border-radius: 20px;
+    padding: 6px 14px;
+    color: #888;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.review-like-btn:hover {
+    border-color: #F44336;
+    color: #F44336;
+}
+
+.no-reviews {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-size: 14px;
+}
+
+.review-more {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.review-more-btn {
+    padding: 10px 32px;
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    color: #ccc;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.review-more-btn:hover {
+    background-color: #3a3a3a;
+}
+
+/* ==========================================
+   Responsive
+   ========================================== */
+@media (max-width: 768px) {
+    .content-hero {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-top: -80px;
+    }
+
+    .content-poster {
+        width: 160px;
+        min-width: 160px;
+        height: 240px;
+    }
+
+    .content-info {
+        padding-top: 16px;
+    }
+
+    .content-title {
+        font-size: 24px;
+    }
+
+    .content-meta,
+    .content-genres {
+        justify-content: center;
+    }
+
+    .kino-score-section {
+        justify-content: center;
+    }
+
+    .ott-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .director-list {
+        justify-content: center;
+    }
+}

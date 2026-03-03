@@ -1,0 +1,58 @@
+.profile-card {
+    background-color: #1e1e1e;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 40px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #7C4DFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: #ffffff;
+}
+.profile-name {
+    font-size: 24px;
+    font-weight: 700;
+}
+.profile-email {
+    color: #888;
+    font-size: 14px;
+    margin-top: 4px;
+}
+.profile-info {
+    border-top: 1px solid #2a2a2a;
+    padding-top: 24px;
+}
+.profile-info-row {
+    display: flex;
+    padding: 12px 0;
+    border-bottom: 1px solid #222;
+}
+.profile-info-label {
+    width: 120px;
+    color: #888;
+    font-size: 14px;
+}
+.profile-info-value {
+    flex: 1;
+    font-size: 14px;
+}
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 24px;
+}
