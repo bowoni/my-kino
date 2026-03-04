@@ -1,8 +1,7 @@
 # 🎬 MyKino
 > TMDB API를 활용한 OTT 콘텐츠 탐색 및 평가 웹 애플리케이션
 
-<!-- 프로젝트 대표 스크린샷 (추후 교체) -->
-<!-- ![MyKino Main](스크린샷_URL) -->
+![MyKino Demo](src/main/resources/static/images/demo.gif)
 
 <br>
 
