@@ -55,3 +55,10 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+bootWar {
+    enabled = true
+}
+bootJar {
+    enabled = false
+}

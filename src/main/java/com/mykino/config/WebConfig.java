@@ -28,6 +28,14 @@ public class WebConfig implements WebMvcConfigurer {
         return new RestTemplate(factory);
     }
 
+    @Bean("geminiRestTemplate")
+    public RestTemplate geminiRestTemplate() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(10000);
+        factory.setReadTimeout(60000);
+        return new RestTemplate(factory);
+    }
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String absolutePath = System.getProperty("user.dir") + "/" + uploadDir + "/";
