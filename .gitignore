@@ -20,7 +20,7 @@ out/
 Thumbs.db
 
 # Sensitive
-src/main/resources/application.properties
+src/main/resources/application-local.properties
 
 # Uploads
 uploads/
