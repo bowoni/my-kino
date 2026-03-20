@@ -58,4 +58,20 @@ public class UserService {
     public boolean checkNicknameDuplicate(String nickname) {
         return userRepository.existsByNickname(nickname);
     }
+
+    @Transactional
+    public void updateProfile(Long userId, String nickname, String bio, String profileImage) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        if (!user.getNickname().equals(nickname)) {
+            userRepository.findByNickname(nickname).ifPresent(existing -> {
+                if (!existing.getId().equals(userId)) {
+                    throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+                }
+            });
+        }
+
+        user.updateProfile(nickname, bio, profileImage);
+    }
 }

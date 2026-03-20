@@ -1,58 +1,541 @@
+/* ==========================================
+   Profile Card (공통)
+   ========================================== */
 .profile-card {
-    background-color: #1e1e1e;
-    border: 1px solid #2a2a2a;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 12px;
-    padding: 40px;
     max-width: 600px;
     margin: 0 auto;
+    overflow: hidden;
 }
-.profile-header {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    margin-bottom: 32px;
-}
-.profile-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: #7C4DFF;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    font-weight: 700;
-    color: #ffffff;
-}
-.profile-name {
-    font-size: 24px;
-    font-weight: 700;
-}
-.profile-email {
-    color: #888;
-    font-size: 14px;
-    margin-top: 4px;
-}
-.profile-info {
-    border-top: 1px solid #2a2a2a;
-    padding-top: 24px;
-}
-.profile-info-row {
-    display: flex;
-    padding: 12px 0;
-    border-bottom: 1px solid #222;
-}
-.profile-info-label {
-    width: 120px;
-    color: #888;
-    font-size: 14px;
-}
-.profile-info-value {
-    flex: 1;
-    font-size: 14px;
-}
+
 .page-title {
     font-size: 28px;
     font-weight: 700;
     margin-bottom: 24px;
+}
+
+/* ==========================================
+   Profile Header (마이페이지 메인)
+   ========================================== */
+.profile-header-link {
+    display: block;
+    transition: background-color 0.15s;
+}
+.profile-header-link:hover {
+    background-color: var(--bg-hover);
+}
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+}
+.profile-avatar {
+    width: 72px;
+    height: 72px;
+    min-width: 72px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    flex-shrink: 0;
+    overflow: hidden;
+}
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.profile-header-info {
+    flex: 1;
+    min-width: 0;
+}
+.profile-name {
+    font-size: 20px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.profile-email {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.profile-chevron {
+    font-size: 24px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+/* ==========================================
+   Watch Stats (찜/보는중/봤어요)
+   ========================================== */
+.watch-stats {
+    display: flex;
+    border-top: 1px solid var(--border-default);
+}
+.watch-stat-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 12px;
+    transition: background-color 0.15s;
+}
+.watch-stat-item:hover {
+    background-color: var(--bg-hover);
+}
+.watch-stat-item + .watch-stat-item {
+    border-left: 1px solid var(--border-default);
+}
+.watch-stat-count {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+.watch-stat-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* ==========================================
+   Review Stat Row
+   ========================================== */
+.review-stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-top: 1px solid var(--border-default);
+    font-size: 15px;
+    transition: background-color 0.15s;
+}
+.review-stat-row:hover {
+    background-color: var(--bg-hover);
+}
+
+/* ==========================================
+   Edit Form (프로필 수정)
+   ========================================== */
+.edit-form {
+    padding: 32px;
+}
+.edit-avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+}
+.edit-avatar {
+    width: 100px;
+    height: 100px;
+    min-width: 100px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--text-primary);
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+.edit-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.edit-avatar-btn {
+    padding: 8px 20px;
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius-md);
+    background: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+.edit-avatar-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+.edit-group {
+    margin-bottom: 20px;
+}
+.edit-label {
+    display: block;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.edit-input {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.edit-input:focus {
+    border-color: var(--color-primary);
+}
+.edit-input.edit-readonly {
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+.edit-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: 14px;
+    outline: none;
+    resize: vertical;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+.edit-textarea:focus {
+    border-color: var(--color-primary);
+}
+.edit-char-count {
+    display: block;
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-disabled);
+    margin-top: 4px;
+}
+.edit-hint {
+    display: block;
+    font-size: 12px;
+    margin-top: 4px;
+}
+.edit-hint.valid {
+    color: var(--color-green);
+}
+.edit-hint.invalid {
+    color: var(--color-red);
+}
+.edit-submit {
+    width: 100%;
+    margin-top: 8px;
+}
+
+/* Alert */
+.alert {
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    margin: 16px 32px 0;
+}
+.alert-error {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: var(--color-red);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+}
+.alert-success {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: var(--color-green);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+/* ==========================================
+   Watchlist Tabs
+   ========================================== */
+.watchlist-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+.watchlist-tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 16px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+.watchlist-tab:hover {
+    border-color: var(--color-primary);
+    color: var(--text-primary);
+}
+.watchlist-tab.active {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--text-primary);
+}
+.tab-count {
+    margin-left: 4px;
+}
+
+/* Watchlist Grid */
+.watchlist-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+}
+.watchlist-grid .content-card {
+    min-width: 0;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.watchlist-grid .content-card:hover {
+    transform: translateY(-4px);
+}
+.watchlist-grid .card-poster {
+    width: 100%;
+    height: 0;
+    padding-bottom: 150%;
+    background-color: var(--bg-input);
+    border-radius: 8px;
+    overflow: hidden;
+    color: var(--text-disabled);
+    font-size: 13px;
+    position: relative;
+}
+.watchlist-grid .card-poster span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.watchlist-grid .card-poster img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.watchlist-grid .card-title {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.watchlist-grid .card-year {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* ==========================================
+   My Reviews List
+   ========================================== */
+.mypage-review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.mypage-review-card {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: 12px;
+    transition: border-color 0.2s;
+}
+.mypage-review-card:hover {
+    border-color: var(--color-primary);
+}
+.mypage-review-poster {
+    width: 48px;
+    height: 72px;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: var(--bg-input);
+    flex-shrink: 0;
+}
+.mypage-review-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.mypage-review-body {
+    flex: 1;
+    min-width: 0;
+}
+.mypage-review-content-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.spoiler-tag {
+    display: inline-block;
+    padding: 1px 6px;
+    background-color: rgba(244, 67, 54, 0.15);
+    color: var(--color-red);
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+.mypage-review-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.mypage-review-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+}
+
+/* ==========================================
+   Pagination
+   ========================================== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 32px;
+}
+.page-link {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+.page-link:hover {
+    border-color: var(--color-primary);
+    color: var(--text-primary);
+}
+.page-link.active {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--text-primary);
+}
+
+/* ==========================================
+   Empty State
+   ========================================== */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    font-size: 15px;
+}
+
+/* ==========================================
+   Responsive
+   ========================================== */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 22px;
+        margin-bottom: 16px;
+    }
+    .profile-header {
+        padding: 20px;
+        gap: 12px;
+    }
+    .profile-avatar {
+        width: 56px;
+        height: 56px;
+        min-width: 56px;
+        font-size: 22px;
+    }
+    .profile-name {
+        font-size: 17px;
+    }
+    .watch-stat-item {
+        padding: 16px 8px;
+    }
+    .watch-stat-count {
+        font-size: 20px;
+    }
+    .watch-stat-label {
+        font-size: 12px;
+    }
+    .review-stat-row {
+        padding: 14px 20px;
+        font-size: 14px;
+    }
+    .edit-form {
+        padding: 24px 20px;
+    }
+    .edit-avatar {
+        width: 80px;
+        height: 80px;
+        min-width: 80px;
+        font-size: 32px;
+    }
+    .watchlist-tabs {
+        gap: 6px;
+    }
+    .watchlist-tab {
+        padding: 10px 8px;
+        font-size: 13px;
+    }
+    .watchlist-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+    .mypage-review-card {
+        padding: 12px;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .watchlist-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .profile-header {
+        padding: 16px;
+    }
+    .profile-avatar {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        font-size: 18px;
+    }
+    .profile-name {
+        font-size: 15px;
+    }
+    .profile-email {
+        font-size: 12px;
+    }
+    .edit-form {
+        padding: 20px 16px;
+    }
+    .alert {
+        margin: 12px 16px 0;
+    }
 }

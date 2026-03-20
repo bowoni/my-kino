@@ -9,6 +9,7 @@ import com.mykino.repository.ContentRepository;
 import com.mykino.service.ContentService;
 import com.mykino.service.RatingService;
 import com.mykino.service.TmdbService;
+import com.mykino.service.WatchlistService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,6 +32,7 @@ public class ContentController {
     private final ContentRepository contentRepository;
     private final TmdbService tmdbService;
     private final RatingService ratingService;
+    private final WatchlistService watchlistService;
 
     @GetMapping("/{id}")
     public String contentDetail(@PathVariable Long id,
@@ -41,13 +43,17 @@ public class ContentController {
 
         // 로그인한 사용자의 기존 평가 정보
         if (userDetails != null) {
-            Optional<Rating> myRating = ratingService.getUserRating(
-                    userDetails.getUser().getId(), id);
+            Long userId = userDetails.getUser().getId();
+
+            Optional<Rating> myRating = ratingService.getUserRating(userId, id);
             myRating.ifPresent(r -> {
                 model.addAttribute("myTrafficColor", r.getTrafficColor().name());
                 model.addAttribute("myScore", r.getScore());
                 model.addAttribute("myComment", r.getComment());
             });
+
+            watchlistService.getWatchStatus(userId, id)
+                    .ifPresent(s -> model.addAttribute("myWatchStatus", s.name()));
         }
 
         return "content/detail";

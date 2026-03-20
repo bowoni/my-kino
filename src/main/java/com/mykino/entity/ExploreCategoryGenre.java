@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "explore_category_genres")
+@Table(name = "explore_category_genres",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"category_id", "tmdb_genre_id"}))
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExploreCategoryGenre {
@@ -20,7 +21,7 @@ public class ExploreCategoryGenre {
     @JoinColumn(name = "category_id", nullable = false)
     private ExploreCategory category;
 
-    @Column(nullable = false)
+    @Column(name = "tmdb_genre_id", nullable = false)
     private Integer tmdbGenreId;
 
     @Column(nullable = false, length = 30)

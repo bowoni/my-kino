@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.util.HtmlUtils;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,9 +98,9 @@ public class ReviewController {
     private Map<String, Object> toMap(Review review) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("id", review.getId());
-        map.put("nickname", review.getUser().getNickname());
-        map.put("title", review.getTitle());
-        map.put("body", review.getBody());
+        map.put("nickname", HtmlUtils.htmlEscape(review.getUser().getNickname()));
+        map.put("title", review.getTitle() != null ? HtmlUtils.htmlEscape(review.getTitle()) : null);
+        map.put("body", HtmlUtils.htmlEscape(review.getBody()));
         map.put("hasSpoiler", review.getHasSpoiler());
         map.put("likeCount", review.getLikeCount());
         map.put("createdAt", review.getCreatedAt().toString());

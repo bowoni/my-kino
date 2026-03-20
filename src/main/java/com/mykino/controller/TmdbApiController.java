@@ -21,6 +21,16 @@ public class TmdbApiController {
     private final ExploreCategoryRepository exploreCategoryRepository;
     private final OttPlatformRepository ottPlatformRepository;
 
+    @GetMapping("/today-pick")
+    public ResponseEntity<Map<String, Object>> todayPick() {
+        return ResponseEntity.ok(tmdbService.getTodayPick());
+    }
+
+    @GetMapping("/upcoming")
+    public ResponseEntity<Map<String, Object>> upcoming(@RequestParam(defaultValue = "0") int page) {
+        return ResponseEntity.ok(tmdbService.getUpcoming(page));
+    }
+
     @GetMapping("/popular")
     public ResponseEntity<Map<String, Object>> popular(@RequestParam(defaultValue = "0") int page) {
         return ResponseEntity.ok(tmdbService.getPopular(page));
@@ -42,8 +52,12 @@ public class TmdbApiController {
             @RequestParam(defaultValue = "all") String mediaType,
             @RequestParam(defaultValue = "popularity.desc") String sort,
             @RequestParam(required = false) String provider,
+            @RequestParam(required = false) String country,
+            @RequestParam(required = false) String year,
+            @RequestParam(required = false) String voteMin,
+            @RequestParam(required = false) String certification,
             @RequestParam(defaultValue = "0") int page) {
-        return ResponseEntity.ok(tmdbService.discover(genre, mediaType, sort, provider, page));
+        return ResponseEntity.ok(tmdbService.discover(genre, mediaType, sort, provider, country, year, voteMin, certification, page));
     }
 
     @GetMapping("/genres")

@@ -1,5 +1,6 @@
 package com.mykino.entity;
 
+import com.mykino.enums.WatchStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,9 +30,18 @@ public class Watchlist extends BaseEntity {
     @JoinColumn(name = "folder_id")
     private WatchlistFolder folder;
 
-    public Watchlist(User user, Content content, WatchlistFolder folder) {
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private WatchStatus status;
+
+    public Watchlist(User user, Content content, WatchlistFolder folder, WatchStatus status) {
         this.user = user;
         this.content = content;
         this.folder = folder;
+        this.status = status;
+    }
+
+    public void updateStatus(WatchStatus status) {
+        this.status = status;
     }
 }

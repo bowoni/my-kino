@@ -10,9 +10,12 @@ import com.mykino.repository.ReviewRepository;
 import com.mykino.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,18 @@ public class ReviewService {
 
     public Page<Review> getReviews(Long contentId, Pageable pageable) {
         return reviewRepository.findByContentIdAndIsPublicTrue(contentId, pageable);
+    }
+
+    public List<Review> getLatestReviews(int limit) {
+        return reviewRepository.findByIsPublicTrueOrderByCreatedAtDesc(PageRequest.of(0, limit));
+    }
+
+    public long countByUser(Long userId) {
+        return reviewRepository.countByUserId(userId);
+    }
+
+    public Page<Review> getMyReviews(Long userId, Pageable pageable) {
+        return reviewRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
     }
 
     @Transactional

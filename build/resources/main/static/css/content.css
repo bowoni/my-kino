@@ -20,12 +20,12 @@
     left: 0;
     right: 0;
     height: 200px;
-    background: linear-gradient(transparent, #141414);
+    background: linear-gradient(transparent, var(--bg-body));
 }
 
 /* Hero Section (Poster + Info) */
 .content-hero {
-    max-width: 1200px;
+    max-width: var(--max-width);
     margin: -120px auto 0;
     padding: 0 20px;
     position: relative;
@@ -39,13 +39,13 @@
     min-width: 220px;
     height: 330px;
     border-radius: 12px;
-    background-color: #2a2a2a;
+    background-color: var(--bg-input);
     overflow: hidden;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #666;
+    color: var(--text-disabled);
     font-size: 14px;
 }
 
@@ -69,7 +69,7 @@
 
 .content-title-eng {
     font-size: 16px;
-    color: #888;
+    color: var(--text-muted);
     margin-bottom: 16px;
 }
 
@@ -82,10 +82,10 @@
 
 .meta-tag {
     padding: 4px 12px;
-    background-color: #2a2a2a;
+    background-color: var(--bg-input);
     border-radius: 20px;
     font-size: 13px;
-    color: #ccc;
+    color: var(--text-secondary);
 }
 
 .content-genres {
@@ -96,7 +96,7 @@
 
 .genre-tag {
     padding: 6px 14px;
-    border: 1px solid #3a3a3a;
+    border: 1px solid var(--border-input);
     border-radius: 20px;
     font-size: 13px;
     color: #e0e0e0;
@@ -119,22 +119,22 @@
     justify-content: center;
     font-size: 22px;
     font-weight: 800;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .kino-badge.green {
-    background-color: #4CAF50;
+    background-color: var(--color-green);
     box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
 }
 
 .kino-badge.yellow {
-    background-color: #FFC107;
+    background-color: var(--color-yellow);
     color: #333;
     box-shadow: 0 0 20px rgba(255, 193, 7, 0.4);
 }
 
 .kino-badge.red {
-    background-color: #F44336;
+    background-color: var(--color-red);
     box-shadow: 0 0 20px rgba(244, 67, 54, 0.4);
 }
 
@@ -149,7 +149,7 @@
 
 .kino-label {
     font-size: 13px;
-    color: #888;
+    color: var(--text-muted);
 }
 
 .kino-status {
@@ -159,17 +159,70 @@
 
 .kino-count {
     font-size: 12px;
-    color: #666;
+    color: var(--text-disabled);
     margin-top: 2px;
+}
+
+/* Watch Status Buttons */
+.watch-status-btns {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.watch-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border: 1px solid var(--border-input);
+    border-radius: var(--radius-full);
+    background: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.watch-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--text-primary);
+}
+
+.watch-btn .watch-icon {
+    font-size: 16px;
+}
+
+.watch-btn.active[data-status="WANT_TO_WATCH"] {
+    border-color: var(--color-primary);
+    background-color: rgba(124, 77, 255, 0.15);
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.watch-btn.active[data-status="WATCHING"] {
+    border-color: var(--color-yellow);
+    background-color: rgba(255, 193, 7, 0.15);
+    color: var(--color-yellow);
+    font-weight: 600;
+}
+
+.watch-btn.active[data-status="WATCHED"] {
+    border-color: var(--color-green);
+    background-color: rgba(76, 175, 80, 0.15);
+    color: var(--color-green);
+    font-weight: 600;
 }
 
 /* ==========================================
    Content Body Sections
    ========================================== */
 .content-body {
-    max-width: 1200px;
+    max-width: var(--max-width);
+    width: 100%;
     margin: 0 auto;
     padding: 32px 20px;
+    flex: 1;
 }
 
 .section {
@@ -181,7 +234,7 @@
     font-weight: 700;
     margin-bottom: 16px;
     padding-bottom: 8px;
-    border-bottom: 1px solid #2a2a2a;
+    border-bottom: 1px solid var(--border-default);
 }
 
 /* OTT Section */
@@ -192,8 +245,8 @@
 }
 
 .ott-card {
-    background-color: #1e1e1e;
-    border: 1px solid #2a2a2a;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 10px;
     padding: 16px 20px;
     display: flex;
@@ -203,7 +256,7 @@
 }
 
 .ott-card:hover {
-    border-color: #7C4DFF;
+    border-color: var(--color-primary);
 }
 
 .ott-left {
@@ -212,11 +265,18 @@
     gap: 12px;
 }
 
+.ott-logo-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
 .ott-logo {
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    background-color: #2a2a2a;
+    background-color: var(--bg-input);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -232,7 +292,7 @@
 
 .ott-type {
     font-size: 12px;
-    color: #888;
+    color: var(--text-muted);
     margin-top: 2px;
 }
 
@@ -247,19 +307,19 @@
     font-size: 12px;
     font-weight: 600;
     background-color: rgba(124, 77, 255, 0.15);
-    color: #7C4DFF;
+    color: var(--color-primary);
 }
 
 .ott-price {
     font-size: 13px;
-    color: #ccc;
+    color: var(--text-secondary);
 }
 
 .ott-link {
     display: inline-block;
     margin-top: 6px;
     font-size: 12px;
-    color: #7C4DFF;
+    color: var(--color-primary);
 }
 
 .ott-link:hover {
@@ -267,12 +327,12 @@
 }
 
 .ott-card.theater {
-    border-color: #e74c3c;
+    border-color: var(--color-theater);
     background-color: rgba(231, 76, 60, 0.08);
 }
 
 .ott-logo.theater {
-    background-color: #e74c3c;
+    background-color: var(--color-theater);
     font-size: 20px;
     line-height: 40px;
     text-align: center;
@@ -285,14 +345,14 @@
     font-size: 12px;
     font-weight: 600;
     background-color: rgba(231, 76, 60, 0.15);
-    color: #e74c3c;
+    color: var(--color-theater);
 }
 
 /* Synopsis */
 .synopsis-text {
     font-size: 15px;
     line-height: 1.8;
-    color: #ccc;
+    color: var(--text-secondary);
 }
 
 /* Cast Section */
@@ -308,7 +368,7 @@
 }
 
 .cast-list::-webkit-scrollbar-thumb {
-    background-color: #3a3a3a;
+    background-color: var(--bg-hover);
     border-radius: 2px;
 }
 
@@ -321,13 +381,13 @@
     width: 72px;
     height: 72px;
     border-radius: 50%;
-    background-color: #2a2a2a;
+    background-color: var(--bg-input);
     margin: 0 auto 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    color: #666;
+    color: var(--text-disabled);
 }
 
 .cast-avatar img {
@@ -345,7 +405,7 @@
 
 .cast-role {
     font-size: 11px;
-    color: #888;
+    color: var(--text-muted);
 }
 
 /* Director */
@@ -360,14 +420,14 @@
     align-items: center;
     gap: 8px;
     padding: 8px 16px;
-    background-color: #1e1e1e;
-    border: 1px solid #2a2a2a;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 8px;
 }
 
 .director-label {
     font-size: 12px;
-    color: #888;
+    color: var(--text-muted);
 }
 
 .director-name {
@@ -379,8 +439,8 @@
    My Rating
    ========================================== */
 .my-rating {
-    background-color: #1e1e1e;
-    border: 1px solid #2a2a2a;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 12px;
     padding: 24px;
 }
@@ -398,10 +458,10 @@
     align-items: center;
     gap: 8px;
     padding: 16px;
-    border: 2px solid #3a3a3a;
+    border: 2px solid var(--border-input);
     border-radius: 12px;
     background: none;
-    color: #888;
+    color: var(--text-muted);
     cursor: pointer;
     transition: all 0.2s;
     font-size: 13px;
@@ -409,24 +469,24 @@
 
 .traffic-btn:hover {
     border-color: #555;
-    color: #ccc;
+    color: var(--text-secondary);
 }
 
 .traffic-btn.red.active {
-    border-color: #F44336;
-    color: #F44336;
+    border-color: var(--color-red);
+    color: var(--color-red);
     background-color: rgba(244, 67, 54, 0.1);
 }
 
 .traffic-btn.yellow.active {
-    border-color: #FFC107;
-    color: #FFC107;
+    border-color: var(--color-yellow);
+    color: var(--color-yellow);
     background-color: rgba(255, 193, 7, 0.1);
 }
 
 .traffic-btn.green.active {
-    border-color: #4CAF50;
-    color: #4CAF50;
+    border-color: var(--color-green);
+    color: var(--color-green);
     background-color: rgba(76, 175, 80, 0.1);
 }
 
@@ -439,7 +499,7 @@
 
 .rating-score label {
     font-size: 14px;
-    color: #888;
+    color: var(--text-muted);
 }
 
 .star-rating {
@@ -449,13 +509,13 @@
 
 .star {
     font-size: 28px;
-    color: #3a3a3a;
+    color: var(--border-input);
     cursor: pointer;
     transition: color 0.15s;
 }
 
 .star.filled {
-    color: #FFC107;
+    color: var(--color-yellow);
 }
 
 .star.hover {
@@ -465,38 +525,42 @@
 .score-value {
     font-size: 18px;
     font-weight: 700;
-    color: #FFC107;
+    color: var(--color-yellow);
     min-width: 20px;
 }
 
-.rating-comment {
-    display: flex;
-    gap: 8px;
-}
-
-.rating-comment input {
-    flex: 1;
-    padding: 12px 16px;
-    background-color: #2a2a2a;
-    border: 1px solid #3a3a3a;
+.my-rating textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-input);
     border-radius: 8px;
-    color: #fff;
+    color: var(--text-primary);
     font-size: 14px;
     outline: none;
+    resize: vertical;
+    font-family: inherit;
+    margin-bottom: 12px;
 }
 
-.rating-comment input:focus {
-    border-color: #7C4DFF;
+.my-rating textarea:focus {
+    border-color: var(--color-primary);
 }
 
-.rating-comment input::placeholder {
-    color: #666;
+.my-rating textarea::placeholder {
+    color: var(--text-disabled);
+}
+
+.rating-form-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .rating-submit-btn {
     padding: 12px 24px;
-    background-color: #7C4DFF;
-    color: #fff;
+    background-color: var(--color-primary);
+    color: var(--text-primary);
     border: none;
     border-radius: 8px;
     font-size: 14px;
@@ -507,20 +571,20 @@
 }
 
 .rating-submit-btn:hover {
-    background-color: #6E3FE8;
+    background-color: var(--color-primary-hover);
 }
 
 .login-prompt {
     text-align: center;
     padding: 24px;
-    background-color: #1e1e1e;
-    border: 1px solid #2a2a2a;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 12px;
-    color: #888;
+    color: var(--text-muted);
 }
 
 .login-prompt a {
-    color: #7C4DFF;
+    color: var(--color-primary);
     font-weight: 600;
 }
 
@@ -528,8 +592,8 @@
    Reviews
    ========================================== */
 .review-form {
-    background-color: #1e1e1e;
-    border: 1px solid #2a2a2a;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 24px;
@@ -538,30 +602,30 @@
 .review-form input[type="text"] {
     width: 100%;
     padding: 10px 14px;
-    background-color: #2a2a2a;
-    border: 1px solid #3a3a3a;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-input);
     border-radius: 8px;
-    color: #fff;
+    color: var(--text-primary);
     font-size: 14px;
     outline: none;
     margin-bottom: 10px;
 }
 
 .review-form input[type="text"]:focus {
-    border-color: #7C4DFF;
+    border-color: var(--color-primary);
 }
 
 .review-form input[type="text"]::placeholder {
-    color: #666;
+    color: var(--text-disabled);
 }
 
 .review-form textarea {
     width: 100%;
     padding: 12px 14px;
-    background-color: #2a2a2a;
-    border: 1px solid #3a3a3a;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-input);
     border-radius: 8px;
-    color: #fff;
+    color: var(--text-primary);
     font-size: 14px;
     outline: none;
     resize: vertical;
@@ -570,11 +634,11 @@
 }
 
 .review-form textarea:focus {
-    border-color: #7C4DFF;
+    border-color: var(--color-primary);
 }
 
 .review-form textarea::placeholder {
-    color: #666;
+    color: var(--text-disabled);
 }
 
 .review-form-bottom {
@@ -588,14 +652,14 @@
     align-items: center;
     gap: 6px;
     font-size: 13px;
-    color: #888;
+    color: var(--text-muted);
     cursor: pointer;
 }
 
 .review-submit-btn {
     padding: 10px 20px;
-    background-color: #7C4DFF;
-    color: #fff;
+    background-color: var(--color-primary);
+    color: var(--text-primary);
     border: none;
     border-radius: 8px;
     font-size: 14px;
@@ -605,12 +669,12 @@
 }
 
 .review-submit-btn:hover {
-    background-color: #6E3FE8;
+    background-color: var(--color-primary-hover);
 }
 
 .review-card {
-    background-color: #1e1e1e;
-    border: 1px solid #2a2a2a;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 12px;
@@ -630,7 +694,7 @@
 
 .review-date {
     font-size: 12px;
-    color: #666;
+    color: var(--text-disabled);
 }
 
 .review-title {
@@ -641,7 +705,7 @@
 
 .review-body {
     font-size: 14px;
-    color: #ccc;
+    color: var(--text-secondary);
     line-height: 1.7;
     margin-bottom: 12px;
 }
@@ -650,7 +714,7 @@
     display: inline-block;
     padding: 2px 8px;
     background-color: rgba(244, 67, 54, 0.15);
-    color: #F44336;
+    color: var(--color-red);
     border-radius: 4px;
     font-size: 12px;
     font-weight: 600;
@@ -674,24 +738,24 @@
 
 .review-like-btn {
     background: none;
-    border: 1px solid #3a3a3a;
+    border: 1px solid var(--border-input);
     border-radius: 20px;
     padding: 6px 14px;
-    color: #888;
+    color: var(--text-muted);
     font-size: 13px;
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .review-like-btn:hover {
-    border-color: #F44336;
-    color: #F44336;
+    border-color: var(--color-red);
+    color: var(--color-red);
 }
 
 .no-reviews {
     text-align: center;
     padding: 40px;
-    color: #666;
+    color: var(--text-disabled);
     font-size: 14px;
 }
 
@@ -702,23 +766,27 @@
 
 .review-more-btn {
     padding: 10px 32px;
-    background-color: #2a2a2a;
-    border: 1px solid #3a3a3a;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-input);
     border-radius: 8px;
-    color: #ccc;
+    color: var(--text-secondary);
     font-size: 14px;
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .review-more-btn:hover {
-    background-color: #3a3a3a;
+    background-color: var(--bg-hover);
 }
 
 /* ==========================================
    Responsive
    ========================================== */
 @media (max-width: 768px) {
+    .content-backdrop {
+        height: 260px;
+    }
+
     .content-hero {
         flex-direction: column;
         align-items: center;
@@ -749,11 +817,141 @@
         justify-content: center;
     }
 
+    .watch-status-btns {
+        justify-content: center;
+    }
+
+    .kino-badge {
+        width: 52px;
+        height: 52px;
+        font-size: 18px;
+    }
+
     .ott-grid {
         grid-template-columns: 1fr;
     }
 
     .director-list {
         justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .section-title {
+        font-size: 18px;
+    }
+
+    .content-body {
+        padding: 24px 16px;
+    }
+
+    .traffic-btns {
+        gap: 8px;
+    }
+
+    .traffic-btn {
+        padding: 12px 8px;
+        font-size: 12px;
+    }
+
+    .star {
+        font-size: 24px;
+    }
+
+    .my-rating {
+        padding: 16px;
+    }
+
+    .rating-form-bottom {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .rating-submit-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .review-card {
+        padding: 16px;
+    }
+
+    .review-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .cast-list {
+        gap: 12px;
+    }
+
+    .cast-avatar {
+        width: 56px;
+        height: 56px;
+        font-size: 20px;
+    }
+
+    .cast-name {
+        font-size: 12px;
+    }
+
+    .cast-role {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .content-backdrop {
+        height: 200px;
+    }
+
+    .content-hero {
+        margin-top: -60px;
+        gap: 16px;
+    }
+
+    .content-poster {
+        width: 120px;
+        min-width: 120px;
+        height: 180px;
+    }
+
+    .content-title {
+        font-size: 20px;
+    }
+
+    .content-title-eng {
+        font-size: 14px;
+    }
+
+    .meta-tag {
+        padding: 3px 10px;
+        font-size: 12px;
+    }
+
+    .genre-tag {
+        padding: 4px 10px;
+        font-size: 12px;
+    }
+
+    .watch-btn {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+
+    .traffic-btn {
+        padding: 10px 4px;
+        font-size: 11px;
+        gap: 6px;
+        border-radius: 8px;
+    }
+
+    .ott-card {
+        padding: 12px;
+    }
+
+    .synopsis-text {
+        font-size: 14px;
     }
 }

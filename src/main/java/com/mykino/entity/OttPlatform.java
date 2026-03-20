@@ -30,4 +30,8 @@ public class OttPlatform {
         this.logoUrl = logoUrl;
         this.baseUrl = baseUrl;
     }
+
+    public void updateLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
 }

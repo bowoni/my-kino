@@ -21,13 +21,15 @@
         <!-- 카테고리 필터 -->
         <div class="category-filter" id="categoryFilter"></div>
 
-        <!-- 장르 필터 -->
-        <div class="genre-filter" id="genreFilter">
-            <button class="genre-chip active" data-genre="">전체</button>
-        </div>
-
-        <!-- 정렬 -->
-        <div class="sort-bar">
+        <!-- 필터 버튼 + 태그 + 정렬 -->
+        <div class="filter-sort-bar">
+            <div class="filter-bar-left">
+                <button class="filter-btn" id="filterBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>
+                    <span>필터</span>
+                </button>
+                <div class="filter-tags" id="filterTags" style="display:none;"></div>
+            </div>
             <div class="sort-dropdown" id="sortDropdown">
                 <button class="sort-toggle" id="sortToggle">
                     <span id="sortLabel">인기순</span>
@@ -38,6 +40,62 @@
                     <li class="sort-option" data-sort="vote_average.desc">평점순</li>
                     <li class="sort-option" data-sort="primary_release_date.desc">최신순</li>
                 </ul>
+            </div>
+        </div>
+
+        <!-- 필터 모달 -->
+        <div class="genre-modal-overlay" id="filterModalOverlay">
+            <div class="genre-modal">
+                <div class="genre-modal-header">
+                    <h3>필터</h3>
+                    <div class="filter-header-actions">
+                        <button class="filter-reset-btn" id="filterResetBtn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                            초기화
+                        </button>
+                        <button class="genre-modal-close" id="filterModalClose">&times;</button>
+                    </div>
+                </div>
+                <div class="genre-modal-body" id="filterModalBody">
+                    <div class="filter-section" id="filterGenreSection">
+                        <div class="filter-section-header">
+                            <span class="filter-section-title">장르</span>
+                            <button class="filter-select-all active" data-section="filterGenreSection" data-type="multi"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>전체 선택</button>
+                        </div>
+                        <div class="filter-chips" id="filterGenreChips"></div>
+                    </div>
+                    <div class="filter-section" id="filterCountrySection">
+                        <div class="filter-section-header">
+                            <span class="filter-section-title">국가</span>
+                            <button class="filter-select-all active" data-section="filterCountrySection" data-type="multi"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>전체 선택</button>
+                        </div>
+                        <div class="filter-chips" id="filterCountryChips"></div>
+                    </div>
+                    <div class="filter-section" id="filterYearSection">
+                        <div class="filter-section-header">
+                            <span class="filter-section-title">공개연도</span>
+                            <button class="filter-select-all active" data-section="filterYearSection" data-type="single" data-key="year"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>전체 선택</button>
+                        </div>
+                        <div class="filter-chips" id="filterYearChips"></div>
+                    </div>
+                    <div class="filter-section" id="filterVoteSection">
+                        <div class="filter-section-header">
+                            <span class="filter-section-title">TMDB 평점</span>
+                            <button class="filter-select-all active" data-section="filterVoteSection" data-type="single" data-key="voteMin"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>전체 선택</button>
+                        </div>
+                        <div class="filter-chips" id="filterVoteChips"></div>
+                    </div>
+                    <div class="filter-section" id="filterCertSection">
+                        <div class="filter-section-header">
+                            <span class="filter-section-title">관람등급</span>
+                            <button class="filter-select-all active" data-section="filterCertSection" data-type="single" data-key="certification"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>전체 선택</button>
+                        </div>
+                        <div class="filter-chips" id="filterCertChips"></div>
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button class="btn-primary filter-apply-btn" id="filterApplyBtn">적용하기</button>
+                </div>
             </div>
         </div>
 
@@ -53,241 +111,7 @@
 
     <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 
-    <script>
-        var CATEGORIES = [];
-        var OTT_PROVIDERS = [];
-
-        var grid = document.getElementById('exploreGrid');
-        var loading = document.getElementById('exploreLoading');
-        var emptyState = document.getElementById('exploreEmpty');
-        var currentCategory = null;
-        var currentGenre = '';
-        var currentProvider = '';
-        var currentSort = 'popularity.desc';
-        var page = 0;
-        var isLoading = false;
-        var hasMore = true;
-
-        // DB에서 카테고리 + OTT 데이터 fetch 후 초기화
-        Promise.all([
-            fetch('/api/public/tmdb/categories').then(function(r) { return r.json(); }),
-            fetch('/api/public/tmdb/ott-providers').then(function(r) { return r.json(); })
-        ]).then(function(results) {
-            CATEGORIES = results[0];
-            OTT_PROVIDERS = results[1];
-            currentCategory = CATEGORIES[0];
-            initFilters();
-            loadMore();
-        });
-
-        function initFilters() {
-            // OTT 이미지 버튼 렌더링
-            var ottFilter = document.getElementById('ottFilter');
-            var allOtt = document.createElement('button');
-            allOtt.className = 'ott-img-chip active';
-            allOtt.setAttribute('data-provider', '');
-            allOtt.textContent = '전체';
-            ottFilter.appendChild(allOtt);
-
-            for (var j = 0; j < OTT_PROVIDERS.length; j++) {
-                var btn = document.createElement('button');
-                btn.className = 'ott-img-chip';
-                btn.setAttribute('data-provider', OTT_PROVIDERS[j].id);
-                btn.setAttribute('title', OTT_PROVIDERS[j].name);
-                if (OTT_PROVIDERS[j].logoUrl) {
-                    var img = document.createElement('img');
-                    img.src = OTT_PROVIDERS[j].logoUrl;
-                    img.alt = OTT_PROVIDERS[j].name;
-                    btn.appendChild(img);
-                } else {
-                    btn.textContent = OTT_PROVIDERS[j].name;
-                }
-                ottFilter.appendChild(btn);
-            }
-
-            // 카테고리 칩 렌더링
-            var catFilter = document.getElementById('categoryFilter');
-            for (var i = 0; i < CATEGORIES.length; i++) {
-                var catBtn = document.createElement('button');
-                catBtn.className = 'category-chip' + (i === 0 ? ' active' : '');
-                catBtn.setAttribute('data-category', CATEGORIES[i].key);
-                catBtn.textContent = CATEGORIES[i].label;
-                catFilter.appendChild(catBtn);
-            }
-            renderSubGenres(CATEGORIES[0]);
-        }
-
-        function renderSubGenres(category) {
-            var filter = document.getElementById('genreFilter');
-            filter.innerHTML = '';
-
-            var allBtn = document.createElement('button');
-            allBtn.className = 'genre-chip active';
-            allBtn.setAttribute('data-genre', '');
-            allBtn.textContent = '전체';
-            filter.appendChild(allBtn);
-
-            var subs = category.subGenres;
-            for (var i = 0; i < subs.length; i++) {
-                var btn = document.createElement('button');
-                btn.className = 'genre-chip';
-                btn.setAttribute('data-genre', String(subs[i].id));
-                btn.textContent = subs[i].name;
-                filter.appendChild(btn);
-            }
-
-            filter.style.display = subs.length === 0 ? 'none' : 'flex';
-        }
-
-        // 카테고리 클릭
-        document.getElementById('categoryFilter').addEventListener('click', function(e) {
-            var btn = e.target.closest('.category-chip');
-            if (!btn) return;
-            document.querySelectorAll('.category-chip').forEach(function(el) { el.classList.remove('active'); });
-            btn.classList.add('active');
-
-            var key = btn.getAttribute('data-category');
-            for (var i = 0; i < CATEGORIES.length; i++) {
-                if (CATEGORIES[i].key === key) {
-                    currentCategory = CATEGORIES[i];
-                    break;
-                }
-            }
-            currentGenre = '';
-            renderSubGenres(currentCategory);
-            resetAndLoad();
-        });
-
-        // OTT 클릭
-        document.getElementById('ottFilter').addEventListener('click', function(e) {
-            var btn = e.target.closest('.ott-img-chip');
-            if (!btn) return;
-            document.querySelectorAll('.ott-img-chip').forEach(function(el) { el.classList.remove('active'); });
-            btn.classList.add('active');
-            currentProvider = btn.getAttribute('data-provider');
-            resetAndLoad();
-        });
-
-        // 장르 클릭
-        document.getElementById('genreFilter').addEventListener('click', function(e) {
-            var btn = e.target.closest('.genre-chip');
-            if (!btn) return;
-            document.querySelectorAll('.genre-chip').forEach(function(el) { el.classList.remove('active'); });
-            btn.classList.add('active');
-            currentGenre = btn.getAttribute('data-genre');
-            resetAndLoad();
-        });
-
-        // 정렬 드롭다운
-        var sortToggle = document.getElementById('sortToggle');
-        var sortMenu = document.getElementById('sortMenu');
-        var sortDropdown = document.getElementById('sortDropdown');
-        var sortLabel = document.getElementById('sortLabel');
-
-        sortToggle.addEventListener('click', function() {
-            sortDropdown.classList.toggle('open');
-        });
-
-        sortMenu.addEventListener('click', function(e) {
-            var option = e.target.closest('.sort-option');
-            if (!option) return;
-            sortMenu.querySelectorAll('.sort-option').forEach(function(el) { el.classList.remove('active'); });
-            option.classList.add('active');
-            sortLabel.textContent = option.textContent;
-            currentSort = option.getAttribute('data-sort');
-            sortDropdown.classList.remove('open');
-            resetAndLoad();
-        });
-
-        document.addEventListener('click', function(e) {
-            if (!sortDropdown.contains(e.target)) {
-                sortDropdown.classList.remove('open');
-            }
-        });
-
-        function resetAndLoad() {
-            page = 0;
-            hasMore = true;
-            grid.innerHTML = '';
-            emptyState.style.display = 'none';
-            loadMore();
-        }
-
-        function buildGenreParam(baseGenre, subGenre) {
-            if (!baseGenre && !subGenre) return null;
-            if (!baseGenre) return subGenre;
-            if (!subGenre) return baseGenre;
-
-            // baseGenre가 OR(|)이고 subGenre가 그 중 하나면 subGenre만 사용
-            if (baseGenre.indexOf('|') !== -1) {
-                var parts = baseGenre.split('|');
-                for (var i = 0; i < parts.length; i++) {
-                    if (parts[i] === subGenre) return subGenre;
-                }
-            }
-
-            return baseGenre + ',' + subGenre;
-        }
-
-        function renderCard(item) {
-            var poster = item.posterUrl
-                ? '<img src="' + item.posterUrl + '" alt="' + item.title + '">'
-                : '<span>' + item.title.substring(0, 4) + '</span>';
-            var score = item.voteAverage
-                ? '<div class="explore-score tmdb-score">' + item.voteAverage + '</div>'
-                : '';
-            return '<a href="/content/tmdb/' + item.tmdbId + '?type=' + (item.mediaType || 'movie') + '" class="explore-card">'
-                + '<div class="explore-poster">' + poster + score + '</div>'
-                + '<div class="explore-title">' + item.title + '</div>'
-                + '<div class="explore-meta">' + (item.releaseYear || '') + ' · ' + item.contentType + '</div>'
-                + '</a>';
-        }
-
-        function loadMore() {
-            if (isLoading || !hasMore || !currentCategory) return;
-            isLoading = true;
-            loading.style.display = 'flex';
-
-            var effectiveGenre = buildGenreParam(currentCategory.baseGenre, currentGenre);
-            var url = '/api/public/tmdb/discover?sort=' + currentSort
-                    + '&page=' + page
-                    + '&mediaType=' + currentCategory.mediaType;
-            if (effectiveGenre) {
-                url += '&genre=' + encodeURIComponent(effectiveGenre);
-            }
-            if (currentProvider) {
-                url += '&provider=' + currentProvider;
-            }
-
-            fetch(url)
-                .then(function(r) { return r.json(); })
-                .then(function(data) {
-                    var items = data.content;
-                    if (page === 0 && items.length === 0) {
-                        emptyState.style.display = 'block';
-                    }
-                    var html = '';
-                    for (var i = 0; i < items.length; i++) {
-                        html += renderCard(items[i]);
-                    }
-                    grid.insertAdjacentHTML('beforeend', html);
-                    page++;
-                    hasMore = page < data.totalPages;
-                    isLoading = false;
-                    loading.style.display = 'none';
-                })
-                .catch(function() {
-                    isLoading = false;
-                    loading.style.display = 'none';
-                });
-        }
-
-        // 무한스크롤
-        window.addEventListener('scroll', function() {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
-                loadMore();
-            }
-        });
-    </script>
+    <script src="/js/util.js"></script>
+    <script src="/js/explore.js"></script>
 </body>
 </html>

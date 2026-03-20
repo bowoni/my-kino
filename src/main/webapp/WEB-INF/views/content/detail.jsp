@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${content.title} - MyKino</title>
+    <title><c:out value="${content.title}"/> - MyKino</title>
     <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="/css/content.css">
 </head>
@@ -23,7 +23,7 @@
         <div class="content-poster">
             <c:choose>
                 <c:when test="${not empty content.posterUrl}">
-                    <img src="${content.posterUrl}" alt="${content.title}">
+                    <img src="${content.posterUrl}" alt="${fn:escapeXml(content.title)}">
                 </c:when>
                 <c:otherwise>
                     포스터 없음
@@ -32,9 +32,9 @@
         </div>
 
         <div class="content-info">
-            <h1 class="content-title">${content.title}</h1>
+            <h1 class="content-title"><c:out value="${content.title}"/></h1>
             <c:if test="${not empty content.titleEng}">
-                <p class="content-title-eng">${content.titleEng}</p>
+                <p class="content-title-eng"><c:out value="${content.titleEng}"/></p>
             </c:if>
 
             <!-- Meta Tags -->
@@ -84,6 +84,24 @@
                     </c:otherwise>
                 </c:choose>
             </div>
+
+            <!-- Watch Status -->
+            <sec:authorize access="isAuthenticated()">
+                <div class="watch-status-btns" id="watchStatusBtns" data-content-id="${content.id}">
+                    <button class="watch-btn ${myWatchStatus == 'WANT_TO_WATCH' ? 'active' : ''}"
+                            data-status="WANT_TO_WATCH">
+                        <span class="watch-icon">&#128278;</span> 찜
+                    </button>
+                    <button class="watch-btn ${myWatchStatus == 'WATCHING' ? 'active' : ''}"
+                            data-status="WATCHING">
+                        <span class="watch-icon">&#9200;</span> 보는중
+                    </button>
+                    <button class="watch-btn ${myWatchStatus == 'WATCHED' ? 'active' : ''}"
+                            data-status="WATCHED">
+                        <span class="watch-icon">&#9989;</span> 봤어요
+                    </button>
+                </div>
+            </sec:authorize>
         </div>
     </div>
 
@@ -108,7 +126,14 @@
                                             </div>
                                         </c:when>
                                         <c:otherwise>
-                                            <div class="ott-logo">${fn:substring(ott.ottName, 0, 2)}</div>
+                                            <c:choose>
+                                                <c:when test="${not empty ott.logoUrl}">
+                                                    <img class="ott-logo-img" src="${ott.logoUrl}" alt="${fn:escapeXml(ott.ottName)}">
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <div class="ott-logo">${fn:substring(ott.ottName, 0, 2)}</div>
+                                                </c:otherwise>
+                                            </c:choose>
                                             <div>
                                                 <div class="ott-name">${ott.ottName}</div>
                                                 <c:if test="${ott.isStreaming}">
@@ -156,7 +181,7 @@
                 <div class="director-list">
                     <c:forEach var="director" items="${content.directors}">
                         <div class="director-tag">
-                            <span class="director-name">${director.name}</span>
+                            <span class="director-name"><c:out value="${director.name}"/></span>
                         </div>
                     </c:forEach>
                 </div>
@@ -167,7 +192,7 @@
         <c:if test="${not empty content.synopsis}">
             <div class="section">
                 <h2 class="section-title">줄거리</h2>
-                <p class="synopsis-text">${content.synopsis}</p>
+                <p class="synopsis-text"><c:out value="${content.synopsis}"/></p>
             </div>
         </c:if>
 
@@ -181,16 +206,16 @@
                             <div class="cast-avatar">
                                 <c:choose>
                                     <c:when test="${not empty actor.profileImage}">
-                                        <img src="${actor.profileImage}" alt="${actor.name}">
+                                        <img src="${actor.profileImage}" alt="${fn:escapeXml(actor.name)}">
                                     </c:when>
                                     <c:otherwise>
                                         ${fn:substring(actor.name, 0, 1)}
                                     </c:otherwise>
                                 </c:choose>
                             </div>
-                            <div class="cast-name">${actor.name}</div>
+                            <div class="cast-name"><c:out value="${actor.name}"/></div>
                             <c:if test="${not empty actor.characterName}">
-                                <div class="cast-role">${actor.characterName} 역</div>
+                                <div class="cast-role"><c:out value="${actor.characterName}"/> 역</div>
                             </c:if>
                         </div>
                     </c:forEach>
@@ -198,11 +223,12 @@
             </div>
         </c:if>
 
-        <!-- My Rating -->
+        <!-- 평가 및 리뷰 -->
         <div class="section">
-            <h2 class="section-title">내 평가</h2>
+            <h2 class="section-title">평가 및 리뷰</h2>
             <sec:authorize access="isAuthenticated()">
-                <div class="my-rating" id="myRating" data-content-id="${content.id}">
+                <div class="my-rating" id="myRating" data-content-id="${content.id}"
+                     data-traffic-color="${myTrafficColor}" data-score="${myScore}">
                     <div class="traffic-btns">
                         <button class="traffic-btn red ${myTrafficColor == 'RED' ? 'active' : ''}"
                                 data-color="RED" title="별로예요">
@@ -235,32 +261,18 @@
                         </div>
                         <span class="score-value" id="scoreValue">${myScore != null ? myScore : ''}</span>
                     </div>
-                    <div class="rating-comment">
-                        <input type="text" id="ratingComment" placeholder="한줄평을 남겨보세요"
-                               value="${myComment}" maxlength="200">
-                        <button id="ratingSubmitBtn" class="rating-submit-btn">평가하기</button>
+                    <textarea id="reviewBody" placeholder="이 작품에 대한 평가를 남겨보세요 (선택)" rows="3" maxlength="2000"></textarea>
+                    <div class="rating-form-bottom">
+                        <label class="spoiler-check">
+                            <input type="checkbox" id="reviewSpoiler"> 스포일러 포함
+                        </label>
+                        <button id="submitBtn" class="rating-submit-btn">평가하기</button>
                     </div>
                 </div>
             </sec:authorize>
             <sec:authorize access="isAnonymous()">
                 <div class="login-prompt">
                     <p>평가하려면 <a href="/login">로그인</a>이 필요합니다.</p>
-                </div>
-            </sec:authorize>
-        </div>
-
-        <!-- Reviews -->
-        <div class="section">
-            <h2 class="section-title">리뷰</h2>
-            <sec:authorize access="isAuthenticated()">
-                <div class="review-form" id="reviewForm">
-                    <textarea id="reviewBody" placeholder="이 작품에 대한 리뷰를 작성해보세요" rows="4" maxlength="2000"></textarea>
-                    <div class="review-form-bottom">
-                        <label class="spoiler-check">
-                            <input type="checkbox" id="reviewSpoiler"> 스포일러 포함
-                        </label>
-                        <button id="reviewSubmitBtn" class="review-submit-btn">리뷰 작성</button>
-                    </div>
                 </div>
             </sec:authorize>
             <div id="reviewList" data-content-id="${content.id}"></div>
@@ -273,185 +285,7 @@
 
     <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 
-    <script>
-    (function() {
-        var contentId = parseInt('${content.id}');
-        var selectedColor = '<c:out value="${myTrafficColor}"/>' || null;
-        var selectedScore = '<c:out value="${myScore}"/>' !== '' ? parseFloat('<c:out value="${myScore}"/>') : null;
-
-        // === Traffic Light Rating ===
-        var trafficBtns = document.querySelectorAll('.traffic-btn');
-        trafficBtns.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                trafficBtns.forEach(function(b) { b.classList.remove('active'); });
-                this.classList.add('active');
-                selectedColor = this.getAttribute('data-color');
-            });
-        });
-
-        // === Star Rating ===
-        var stars = document.querySelectorAll('.star');
-        var scoreValue = document.getElementById('scoreValue');
-        stars.forEach(function(star) {
-            star.addEventListener('click', function() {
-                selectedScore = parseInt(this.getAttribute('data-value'));
-                scoreValue.textContent = selectedScore;
-                stars.forEach(function(s) {
-                    s.classList.toggle('filled',
-                        parseInt(s.getAttribute('data-value')) <= selectedScore);
-                });
-            });
-            star.addEventListener('mouseenter', function() {
-                var val = parseInt(this.getAttribute('data-value'));
-                stars.forEach(function(s) {
-                    s.classList.toggle('hover',
-                        parseInt(s.getAttribute('data-value')) <= val);
-                });
-            });
-            star.addEventListener('mouseleave', function() {
-                stars.forEach(function(s) { s.classList.remove('hover'); });
-            });
-        });
-
-        // === Submit Rating ===
-        var submitBtn = document.getElementById('ratingSubmitBtn');
-        if (submitBtn) {
-            submitBtn.addEventListener('click', function() {
-                if (!selectedColor) {
-                    alert('추천/보통/별로 중 하나를 선택해주세요.');
-                    return;
-                }
-                var comment = document.getElementById('ratingComment').value.trim();
-
-                fetch('/api/rating', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contentId: contentId,
-                        trafficColor: selectedColor,
-                        score: selectedScore,
-                        comment: comment
-                    })
-                })
-                .then(function(res) {
-                    if (res.status === 401) { location.href = '/login'; return; }
-                    return res.json();
-                })
-                .then(function(data) {
-                    if (data) {
-                        alert('평가가 저장되었습니다.');
-                        location.reload();
-                    }
-                });
-            });
-        }
-
-        // === Reviews ===
-        var reviewPage = 0;
-        var reviewTotal = 0;
-
-        function loadReviews(page) {
-            fetch('/api/review/content/' + contentId + '?page=' + page)
-                .then(function(res) { return res.json(); })
-                .then(function(data) {
-                    reviewTotal = data.totalPages;
-                    var list = document.getElementById('reviewList');
-                    var html = '';
-
-                    if (data.content.length === 0 && page === 0) {
-                        html = '<p class="no-reviews">아직 리뷰가 없습니다. 첫 리뷰를 남겨보세요!</p>';
-                    }
-
-                    for (var i = 0; i < data.content.length; i++) {
-                        var r = data.content[i];
-                        var bodyText = r.hasSpoiler
-                            ? '<span class="spoiler-tag">스포일러</span> <span class="spoiler-blur">' + r.body + '</span>'
-                            : r.body;
-
-                        html += '<div class="review-card">'
-                            + '<div class="review-header">'
-                            + '<span class="review-nickname">' + r.nickname + '</span>'
-                            + '<span class="review-date">' + r.createdAt.substring(0, 10) + '</span>'
-                            + '</div>';
-                        html += '<div class="review-body">' + bodyText + '</div>'
-                            + '<div class="review-footer">'
-                            + '<button class="review-like-btn" data-review-id="' + r.id + '">'
-                            + '&#10084; ' + r.likeCount
-                            + '</button>'
-                            + '</div>'
-                            + '</div>';
-                    }
-
-                    if (page === 0) {
-                        list.innerHTML = html;
-                    } else {
-                        list.innerHTML += html;
-                    }
-
-                    var moreDiv = document.getElementById('reviewMore');
-                    moreDiv.style.display = (page + 1 < reviewTotal) ? 'block' : 'none';
-                });
-        }
-
-        loadReviews(0);
-
-        document.getElementById('reviewMoreBtn').addEventListener('click', function() {
-            reviewPage++;
-            loadReviews(reviewPage);
-        });
-
-        // === Submit Review ===
-        var reviewSubmitBtn = document.getElementById('reviewSubmitBtn');
-        if (reviewSubmitBtn) {
-            reviewSubmitBtn.addEventListener('click', function() {
-                var body = document.getElementById('reviewBody').value.trim();
-                if (!body) { alert('리뷰 내용을 입력해주세요.'); return; }
-
-                var hasSpoiler = document.getElementById('reviewSpoiler').checked;
-
-                fetch('/api/review', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contentId: contentId,
-                        body: body,
-                        hasSpoiler: hasSpoiler
-                    })
-                })
-                .then(function(res) {
-                    if (res.status === 401) { location.href = '/login'; return; }
-                    return res.json();
-                })
-                .then(function(data) {
-                    if (data) {
-                        document.getElementById('reviewBody').value = '';
-                        document.getElementById('reviewSpoiler').checked = false;
-                        reviewPage = 0;
-                        loadReviews(0);
-                    }
-                });
-            });
-        }
-
-        // === Review Like (delegate) ===
-        document.getElementById('reviewList').addEventListener('click', function(e) {
-            var btn = e.target.closest('.review-like-btn');
-            if (!btn) return;
-
-            var reviewId = btn.getAttribute('data-review-id');
-            fetch('/api/review/' + reviewId + '/like', { method: 'POST' })
-                .then(function(res) {
-                    if (res.status === 401) { location.href = '/login'; return; }
-                    return res.json();
-                })
-                .then(function(data) {
-                    if (data) {
-                        reviewPage = 0;
-                        loadReviews(0);
-                    }
-                });
-        });
-    })();
-    </script>
+    <script src="/js/util.js"></script>
+    <script src="/js/content-detail.js"></script>
 </body>
 </html>

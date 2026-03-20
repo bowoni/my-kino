@@ -17,27 +17,27 @@
 .search-form input {
     flex: 1;
     padding: 14px 24px;
-    background-color: #2a2a2a;
-    border: 2px solid #3a3a3a;
+    background-color: var(--bg-input);
+    border: 2px solid var(--border-input);
     border-radius: 50px;
-    color: #fff;
+    color: var(--text-primary);
     font-size: 16px;
     outline: none;
     transition: border-color 0.2s;
 }
 
 .search-form input:focus {
-    border-color: #7C4DFF;
+    border-color: var(--color-primary);
 }
 
 .search-form input::placeholder {
-    color: #666;
+    color: var(--text-disabled);
 }
 
 .search-btn {
     padding: 14px 28px;
-    background-color: #7C4DFF;
-    color: #fff;
+    background-color: var(--color-primary);
+    color: var(--text-primary);
     border: none;
     border-radius: 50px;
     font-size: 15px;
@@ -48,7 +48,7 @@
 }
 
 .search-btn:hover {
-    background-color: #6E3FE8;
+    background-color: var(--color-primary-hover);
 }
 
 /* Autocomplete */
@@ -59,8 +59,8 @@
     left: 0;
     right: 0;
     margin-top: 8px;
-    background-color: #1e1e1e;
-    border: 1px solid #2a2a2a;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 12px;
     overflow: hidden;
     z-index: 50;
@@ -76,7 +76,7 @@
 }
 
 .ac-item:hover {
-    background-color: #2a2a2a;
+    background-color: var(--bg-input);
 }
 
 .ac-poster {
@@ -99,7 +99,7 @@
 
 .ac-no-img {
     font-size: 14px;
-    color: #666;
+    color: var(--text-disabled);
 }
 
 .ac-info {
@@ -117,7 +117,7 @@
 
 .ac-meta {
     font-size: 12px;
-    color: #888;
+    color: var(--text-muted);
     margin-top: 2px;
 }
 
@@ -132,12 +132,12 @@
 }
 
 .search-info .highlight {
-    color: #7C4DFF;
+    color: var(--color-primary);
 }
 
 .result-count {
     font-size: 14px;
-    color: #888;
+    color: var(--text-muted);
     margin-top: 4px;
 }
 
@@ -152,14 +152,14 @@
     display: flex;
     gap: 20px;
     padding: 16px;
-    background-color: #1e1e1e;
-    border: 1px solid #2a2a2a;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 12px;
     transition: border-color 0.2s;
 }
 
 .search-card:hover {
-    border-color: #7C4DFF;
+    border-color: var(--color-primary);
 }
 
 .search-card .card-poster {
@@ -168,11 +168,11 @@
     height: 150px;
     border-radius: 8px;
     overflow: hidden;
-    background-color: #2a2a2a;
+    background-color: var(--bg-input);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #666;
+    color: var(--text-disabled);
     font-size: 13px;
 }
 
@@ -197,7 +197,7 @@
 
 .card-title-eng {
     font-size: 13px;
-    color: #888;
+    color: var(--text-muted);
     margin-bottom: 8px;
 }
 
@@ -222,7 +222,7 @@
 
 .card-synopsis {
     font-size: 13px;
-    color: #888;
+    color: var(--text-muted);
     line-height: 1.6;
 }
 
@@ -236,20 +236,20 @@
 
 .page-btn {
     padding: 8px 14px;
-    background-color: #2a2a2a;
+    background-color: var(--bg-input);
     border-radius: 6px;
     font-size: 14px;
-    color: #ccc;
+    color: var(--text-secondary);
     transition: all 0.2s;
 }
 
 .page-btn:hover {
-    background-color: #3a3a3a;
+    background-color: var(--bg-hover);
 }
 
 .page-btn.active {
-    background-color: #7C4DFF;
-    color: #fff;
+    background-color: var(--color-primary);
+    color: var(--text-primary);
     font-weight: 600;
 }
 
@@ -267,25 +267,49 @@
 
 .no-results-text {
     font-size: 18px;
-    color: #ccc;
+    color: var(--text-secondary);
     margin-bottom: 8px;
 }
 
 .no-results-hint {
     font-size: 14px;
-    color: #888;
+    color: var(--text-muted);
 }
 
 /* Empty State */
 .search-empty {
     text-align: center;
     padding: 80px 20px;
-    color: #888;
+    color: var(--text-muted);
     font-size: 16px;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
+    .search-bar {
+        margin-bottom: 24px;
+    }
+
+    .search-form {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-form input {
+        padding: 12px 20px;
+        font-size: 15px;
+        border-radius: 12px;
+    }
+
+    .search-btn {
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .search-info h2 {
+        font-size: 18px;
+    }
+
     .search-card {
         gap: 12px;
         padding: 12px;
@@ -303,5 +327,13 @@
 
     .card-synopsis {
         display: none;
+    }
+
+    .no-results {
+        padding: 48px 16px;
+    }
+
+    .search-empty {
+        padding: 48px 16px;
     }
 }

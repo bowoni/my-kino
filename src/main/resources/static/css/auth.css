@@ -10,8 +10,8 @@
 }
 
 .auth-card {
-    background-color: #1e1e1e;
-    border: 1px solid #2a2a2a;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-default);
     border-radius: 12px;
     padding: 48px 40px;
     width: 100%;
@@ -27,7 +27,7 @@
 
 .auth-subtitle {
     text-align: center;
-    color: #888;
+    color: var(--text-muted);
     font-size: 14px;
     margin-bottom: 32px;
 }
@@ -50,68 +50,58 @@
 .form-input {
     width: 100%;
     padding: 12px 14px;
-    background-color: #2a2a2a;
-    border: 1px solid #3a3a3a;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-input);
     border-radius: 8px;
-    color: #ffffff;
+    color: var(--text-primary);
     font-size: 15px;
     outline: none;
     transition: border-color 0.2s;
 }
 
 .form-input:focus {
-    border-color: #7C4DFF;
+    border-color: var(--color-primary);
 }
 
 .form-input::placeholder {
-    color: #666;
+    color: var(--text-disabled);
 }
 
 .form-error {
     font-size: 12px;
-    color: #F44336;
+    color: var(--color-red);
     margin-top: 4px;
 }
 
 .form-hint {
     font-size: 12px;
-    color: #666;
+    color: var(--text-disabled);
     margin-top: 4px;
 }
 
 .form-hint.valid {
-    color: #7C4DFF;
+    color: var(--color-primary);
 }
 
 .form-hint.invalid {
-    color: #F44336;
+    color: var(--color-red);
 }
 
-/* ==========================================
-   Buttons
-   ========================================== */
-.btn-primary {
-    width: 100%;
-    padding: 14px;
-    background-color: #7C4DFF;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
+/* Remember Email */
+.remember-email {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
     cursor: pointer;
-    transition: background-color 0.2s;
-    margin-top: 8px;
+    margin-bottom: 20px;
 }
 
-.btn-primary:hover {
-    background-color: #6E3FE8;
-}
-
-.btn-primary:disabled {
-    background-color: #333;
-    color: #666;
-    cursor: not-allowed;
+/* Submit Button */
+.auth-card .btn-primary {
+    width: 100%;
+    display: block;
 }
 
 /* ==========================================
@@ -127,13 +117,74 @@
 .alert-error {
     background-color: rgba(244, 67, 54, 0.15);
     border: 1px solid rgba(244, 67, 54, 0.3);
-    color: #F44336;
+    color: var(--color-red);
 }
 
 .alert-success {
     background-color: rgba(76, 175, 80, 0.15);
     border: 1px solid rgba(76, 175, 80, 0.3);
-    color: #7C4DFF;
+    color: var(--color-primary);
+}
+
+/* ==========================================
+   Social Login
+   ========================================== */
+.social-divider {
+    display: flex;
+    align-items: center;
+    margin: 24px 0;
+}
+.social-divider::before,
+.social-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: var(--border-input);
+}
+.social-divider span {
+    padding: 0 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.social-login-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+.social-btn:hover {
+    opacity: 0.85;
+}
+
+.social-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.kakao-btn {
+    background-color: #FEE500;
+    color: #191919;
+}
+
+.google-btn {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid var(--border-input);
 }
 
 /* ==========================================
@@ -143,14 +194,38 @@
     text-align: center;
     margin-top: 24px;
     font-size: 14px;
-    color: #888;
+    color: var(--text-muted);
 }
 
 .auth-links a {
-    color: #7C4DFF;
+    color: var(--color-primary);
     font-weight: 500;
 }
 
 .auth-links a:hover {
     text-decoration: underline;
+}
+
+/* ==========================================
+   Responsive
+   ========================================== */
+@media (max-width: 480px) {
+    .auth-container {
+        padding: 24px 16px;
+        align-items: flex-start;
+        min-height: auto;
+    }
+
+    .auth-card {
+        padding: 32px 20px;
+        border-radius: 8px;
+    }
+
+    .auth-title {
+        font-size: 24px;
+    }
+
+    .auth-subtitle {
+        margin-bottom: 24px;
+    }
 }

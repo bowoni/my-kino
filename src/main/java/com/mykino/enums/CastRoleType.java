@@ -2,8 +2,7 @@ package com.mykino.enums;
 
 public enum CastRoleType {
     DIRECTOR("감독"),
-    ACTOR("배우"),
-    WRITER("작가");
+    ACTOR("배우");
 
     private final String displayName;
 

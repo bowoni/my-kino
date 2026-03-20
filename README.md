@@ -1,4 +1,4 @@
-# 🎬 MyKino
+# MyKino
 > TMDB API를 활용한 OTT 콘텐츠 탐색 및 평가 웹 애플리케이션
 
 ![MyKino Demo](src/main/resources/static/images/demo.gif)
@@ -37,18 +37,19 @@
   - 키노라이츠(KinoLights)앱을 모티브로 한 OTT 콘텐츠 통합 탐색 서비스
   - TMDB API 연동을 통한 실시간 영화/드라마/예능 OTT 콘텐츠 정보 제공
   - 신호등 평가 시스템(추천/보통/비추천)과 리뷰 기능을 통한 사용자 참여형 플랫폼
+  - Google/Kakao OAuth2 소셜 로그인 지원
 
 ### 1-2 주요목표
 - Spring Boot 기반 MVC 아키텍처 설계 및 RESTful API 구현
 - TMDB API 연동을 통한 외부 API 데이터 동기화 및 캐싱 전략 이해
-- Spring Security를 활용한 인증/인가 처리 및 역할 기반 접근 제어 구현
+- Spring Security를 활용한 인증/인가 처리 및 역할 기반 접근 제어 구현 (Form + OAuth2)
 - JSP + Vanilla JS 환경에서 SPA에 준하는 인터랙티브 UI 구현 (무한스크롤, 자동완성, 동적 필터링)
 
 ### 1-3 개발환경
 - **활용기술 외 키워드**
-  - **Backend** : Java 11, Spring Boot 2.7.18, Spring Security, Spring Data JPA
+  - **Backend** : Java 11, Spring Boot 2.7.18, Spring Security, Spring Data JPA, OAuth2 Client
   - **Frontend** : JSP, JSTL, Vanilla JavaScript (ES5), CSS3
-  - **Database** : H2 (File Mode, MySQL 호환)
+  - **Database** : PostgreSQL (Supabase)
   - **External API** : TMDB API v3 (영화/TV 정보, 장르, OTT 제공처)
 
 - **라이브러리**
@@ -61,26 +62,37 @@
 순서 | 내용 | 비고
 ---- | ----- | -----
 1 | 프로젝트를 클론합니다 | `git clone` 후 IDE에서 Import
-2 | `application.properties`에서 TMDB API Key를 확인합니다 | 키 발급: [TMDB 개발자](https://www.themoviedb.org/settings/api)
+2 | 환경변수를 설정합니다 | 아래 환경변수 표 참고
 3 | Gradle 빌드를 실행합니다 | `./gradlew build`
 4 | 애플리케이션을 실행합니다 | `./gradlew bootRun` 또는 IDE에서 실행
 5 | 브라우저에서 `http://localhost:8080`에 접속합니다 | 최초 실행 시 TMDB 인기 영화 자동 동기화
 6 | 테스트 계정으로 로그인하거나 회원가입합니다 | `test@mykino.com` / `test1234`
+
+**환경변수 설정**
+
+| 환경변수 | 설명 | 필수 |
+|---------|------|------|
+| `SUPABASE_DB_URL` | PostgreSQL 접속 URL | O |
+| `SUPABASE_DB_USERNAME` | DB 사용자명 | O |
+| `SUPABASE_DB_PASSWORD` | DB 비밀번호 | O |
+| `TMDB_API_KEY` | TMDB API 키 ([발급](https://www.themoviedb.org/settings/api)) | O |
+| `GOOGLE_CLIENT_ID` | Google OAuth2 클라이언트 ID | X |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth2 클라이언트 시크릿 | X |
+| `KAKAO_CLIENT_ID` | Kakao OAuth2 클라이언트 ID | X |
+| `KAKAO_CLIENT_SECRET` | Kakao OAuth2 클라이언트 시크릿 | X |
+| `MYKINO_AUTO_SYNC` | 자동 동기화 여부 (기본: true) | X |
 
 <br>
 
 ## 2-Architecture
 ### 2-1 구조도
 
-<!-- 아키텍처 다이어그램 (추후 추가) -->
-<!-- ![Architecture](아키텍처_다이어그램_URL) -->
-
 <br>
 
 > Spring Boot MVC + JPA
 - 전통적인 MVC 패턴을 기반으로, Controller → Service → Repository 계층 구조로 역할 분리
 - Spring Data JPA를 통한 ORM 기반 데이터 접근
-- Spring Security로 Form 기반 인증 및 역할(USER/ADMIN) 기반 인가 처리
+- Spring Security로 Form 기반 인증 + OAuth2 소셜 로그인 및 역할(USER/ADMIN) 기반 인가 처리
 
 <br>
 
@@ -110,6 +122,7 @@ my-kino
  ┃ ┃ ┗ 📜DataInitializer.java
  ┃ ┣ 📂controller
  ┃ ┃ ┣ 📜HomeController.java
+ ┃ ┃ ┣ 📜HomeApiController.java
  ┃ ┃ ┣ 📜AuthController.java
  ┃ ┃ ┣ 📜ContentController.java
  ┃ ┃ ┣ 📜ExploreController.java
@@ -117,6 +130,7 @@ my-kino
  ┃ ┃ ┣ 📜MypageController.java
  ┃ ┃ ┣ 📜RatingController.java
  ┃ ┃ ┣ 📜ReviewController.java
+ ┃ ┃ ┣ 📜WatchlistController.java
  ┃ ┃ ┣ 📜TmdbApiController.java
  ┃ ┃ ┗ 📜AdminController.java
  ┃ ┣ 📂dto
@@ -160,7 +174,8 @@ my-kino
  ┃   ┣ 📜TmdbService.java
  ┃   ┣ 📜RatingService.java
  ┃   ┣ 📜ReviewService.java
- ┃   ┗ 📜SearchService.java
+ ┃   ┣ 📜SearchService.java
+ ┃   ┗ 📜WatchlistService.java
  ┣ 📂src/main/webapp/WEB-INF/views
  ┃ ┣ 📂common
  ┃ ┃ ┣ 📜header.jsp
@@ -176,7 +191,10 @@ my-kino
  ┃ ┣ 📂search
  ┃ ┃ ┗ 📜result.jsp
  ┃ ┣ 📂mypage
- ┃ ┃ ┗ 📜profile.jsp
+ ┃ ┃ ┣ 📜profile.jsp
+ ┃ ┃ ┣ 📜edit.jsp
+ ┃ ┃ ┣ 📜watchlist.jsp
+ ┃ ┃ ┗ 📜reviews.jsp
  ┃ ┗ 📂admin
  ┃   ┗ 📜tmdb.jsp
  ┗ 📂src/main/resources
@@ -192,6 +210,14 @@ my-kino
      ┃ ┣ 📜auth.css
      ┃ ┣ 📜profile.css
      ┃ ┗ 📜admin.css
+     ┣ 📂js
+     ┃ ┣ 📜util.js
+     ┃ ┣ 📜home.js
+     ┃ ┣ 📜content-detail.js
+     ┃ ┣ 📜explore.js
+     ┃ ┣ 📜search.js
+     ┃ ┣ 📜mypage-edit.js
+     ┃ ┗ 📜admin.js
      ┗ 📂images/ott
        ┗ 📜(OTT 플랫폼 SVG 로고)
 ```
@@ -203,14 +229,8 @@ my-kino
 - TMDB API 연동을 통해 인기, 현재 상영, 높은 평점의 콘텐츠를 실시간으로 제공
 - 카테고리(전체/영화/드라마/애니메이션/예능/시사교양) 탭 필터 + 서브장르 필터로 세분화된 탐색
 - OTT 플랫폼별 필터링 (넷플릭스, 티빙, 웨이브, 왓챠, 디즈니+)으로 내가 구독 중인 OTT의 콘텐츠만 조회
+- 고급 필터 모달: 장르(다중선택), 국가(다중선택), 공개연도, TMDB 평점, 관람등급 5개 카테고리 필터링
 - 무한스크롤 기반 페이지네이션으로 끊김 없는 탐색 경험
-
-<!-- 스크린샷 추가 -->
-<!--
-|![Home](스크린샷_URL)|![Explore](스크린샷_URL)|![OTT Filter](스크린샷_URL)|
-|:-:|:-:|:-:|
-|`Home`|`Explore`|`OTT Filter`|
--->
 
 <br>
 
@@ -220,13 +240,6 @@ my-kino
 - TMDB 실시간 동기화로 최신 포스터, 배경 이미지, 줄거리, 출연진, 감독 정보 제공
 - 해당 콘텐츠를 시청할 수 있는 OTT 플랫폼을 한눈에 확인 (스트리밍/구매/대여 구분)
 - 콘텐츠 유형(영화/드라마/예능/다큐멘터리/애니메이션) 자동 분류
-
-<!-- 스크린샷 추가 -->
-<!--
-|![Detail](스크린샷_URL)|![Cast](스크린샷_URL)|![OTT](스크린샷_URL)|
-|:-:|:-:|:-:|
-|`Detail`|`Cast`|`OTT Providers`|
--->
 
 <br>
 
@@ -238,13 +251,6 @@ my-kino
 - 텍스트 리뷰 작성 시 스포일러 여부 표시 기능
 - 리뷰 좋아요 기능으로 유용한 리뷰 노출
 
-<!-- 스크린샷 추가 -->
-<!--
-|![Rating](스크린샷_URL)|![Review](스크린샷_URL)|![Review Like](스크린샷_URL)|
-|:-:|:-:|:-:|
-|`Traffic Rating`|`Review`|`Review Like`|
--->
-
 <br>
 
 ---
@@ -254,28 +260,33 @@ my-kino
 - 키워드 입력 시 실시간 자동완성 추천 (상위 10건)
 - 검색 히스토리 저장 및 인기 검색어 제공
 
-<!-- 스크린샷 추가 -->
-<!--
-|![Search](스크린샷_URL)|![Autocomplete](스크린샷_URL)|![Results](스크린샷_URL)|
-|:-:|:-:|:-:|
-|`Search`|`Autocomplete`|`Results`|
--->
+<br>
+
+---
+
+### 3-5 마이페이지 (MyPage)
+- 프로필 관리: 닉네임, 자기소개, 프로필 이미지 업로드
+- 찜/시청 관리: 보고싶어요/보는중/봤어요 3단계 시청 상태 관리
+- 내 리뷰 관리: 작성한 리뷰 목록 조회
+- 활동 통계: 평가/리뷰/찜 수 요약
 
 <br>
 
 ---
 
-### 3-5 관리자 기능 (Admin)
+### 3-6 인증 및 소셜 로그인 (Auth)
+- Spring Security Form 로그인 + Google/Kakao OAuth2 소셜 로그인 지원
+- BCrypt 암호화를 적용한 비밀번호 저장
+- ADMIN/USER 역할에 따른 URL 접근 제어
+
+<br>
+
+---
+
+### 3-7 관리자 기능 (Admin)
 - TMDB 인기 영화 일괄 동기화 (페이지 단위)
 - 키워드 검색 후 선택적 동기화
 - TMDB ID 직접 입력을 통한 단건 동기화
-
-<!-- 스크린샷 추가 -->
-<!--
-|![Admin](스크린샷_URL)|
-|:-:|
-|`Admin Panel`|
--->
 
 <br>
 
@@ -302,8 +313,9 @@ genreTmdbMappingRepository.findByTmdbGenreId(tmdbGenreId).ifPresent(mapping -> {
 
 ### 4-2 [Feature 2] Spring Security 인증/인가
 
-> Form 기반 인증 + 역할 기반 접근 제어 구현
+> Form 기반 인증 + OAuth2 소셜 로그인 + 역할 기반 접근 제어 구현
 - BCrypt 암호화를 적용한 비밀번호 저장
+- Google, Kakao OAuth2 소셜 로그인 통합
 - ADMIN/USER 역할에 따른 URL 접근 제어 (`/admin/**`는 ADMIN 전용)
 - 공개 API(`/api/public/**`)와 인증 필요 API 분리
 
@@ -317,18 +329,19 @@ http.authorizeRequests()
 
 <br>
 
-### 4-3 [Feature 3] 탐색 페이지 동적 필터링
+### 4-3 [Feature 3] 탐색 페이지 고급 필터링
 
-> DB 기반 카테고리 + OTT 필터 + 장르 필터 + 정렬 조합
+> DB 기반 카테고리 + OTT 필터 + 5개 카테고리 고급 필터 + 정렬 조합
 - 카테고리/장르/OTT 데이터를 DB에서 관리하여 코드 수정 없이 확장 가능
+- 고급 필터 모달: 장르(다중), 국가(다중), 공개연도(단일), TMDB 평점(단일), 관람등급(단일)
 - 영화/TV를 번갈아 요청하는 페이지 전략으로 `mediaType=all` 지원
 - OTT 플랫폼 로고는 TMDB API에서 실시간으로 가져와 표시
 
 ```javascript
 // DB에서 카테고리 + OTT 데이터 fetch 후 초기화
 Promise.all([
-    fetch('/api/public/tmdb/categories').then(function(r) { return r.json(); }),
-    fetch('/api/public/tmdb/ott-providers').then(function(r) { return r.json(); })
+    MyKino.fetchJson('/api/public/tmdb/categories'),
+    MyKino.fetchJson('/api/public/tmdb/ott-providers')
 ]).then(function(results) {
     CATEGORIES = results[0];
     OTT_PROVIDERS = results[1];
@@ -359,32 +372,68 @@ public enum TrafficColor {
 ## 5-업데이트 및 리팩토링 사항
 ### 5-1 우선 순위별 개선항목
 
-1) OAuth 소셜 로그인
-- [ ] Google, Naver 등 소셜 로그인 연동 (AuthProvider Enum 확장 준비 완료)
+#### P1. 보안 및 안정성 (Critical)
 
-2) 마이페이지 기능 고도화
-- [ ] 보고싶어요(Watchlist) 폴더 관리 및 시청기록(ViewHistory) UI 구현
-- [ ] OTT 구독 정보 기반 맞춤 콘텐츠 추천
+1) XSS 취약점 수정
+- [x] 서버 측: `HtmlUtils.htmlEscape()` 적용 (ReviewController 응답 데이터)
+- [x] 클라이언트 측: `MyKino.escapeHtml()` 유틸 함수로 HTML 삽입 시 이스케이프 처리
+- [x] JSP 측: 사용자 입력 데이터에 `<c:out>` / `fn:escapeXml()` 적용 (검색어, 닉네임, 리뷰 등)
 
-3) 검색 기능 강화
-- [ ] 인기 검색어 및 최근 검색어 UI 표시
-- [ ] 검색 결과 필터링 (영화/드라마/인물 구분)
+2) Admin 엔드포인트 이중 보안
+- [x] `@EnableGlobalMethodSecurity(prePostEnabled = true)` 활성화
+- [x] `AdminController`에 `@PreAuthorize("hasRole('ADMIN')")` 추가 (URL + 메서드 레벨 이중 보안)
 
-4) 알림 시스템
-- [ ] 리뷰 좋아요, 새 콘텐츠 추천 등 알림 기능 구현 (Notification 엔티티 준비 완료)
+3) 환경변수 기반 설정 관리
+- [x] DB 접속 정보 (`SUPABASE_DB_URL`, `SUPABASE_DB_USERNAME`, `SUPABASE_DB_PASSWORD`) 환경변수화
+- [x] TMDB API 키 (`TMDB_API_KEY`) 환경변수화
+- [x] OAuth2 클라이언트 시크릿 (`GOOGLE_CLIENT_ID/SECRET`, `KAKAO_CLIENT_ID/SECRET`) 환경변수화
+- [x] 자동 동기화 토글 (`MYKINO_AUTO_SYNC`) 환경변수화
+
+#### P2. 데이터베이스 및 인프라 (High)
+
+1) H2 → PostgreSQL (Supabase) 전환
+- [x] `build.gradle`: H2 → PostgreSQL 드라이버 교체 (테스트용 H2는 `testRuntimeOnly`로 유지)
+- [x] `application.properties`: PostgreSQL dialect, `ddl-auto=update` 설정
+- [x] `data.sql`: 모든 INSERT에 `ON CONFLICT DO NOTHING` 추가 (멱등성 보장)
+
+2) MyBatis 의존성 제거
+- [x] `mybatis-spring-boot-starter` 의존성 삭제
+- [x] MyBatis 관련 설정 (`mybatis.mapper-locations` 등) 제거
+- [x] JPA 단일 ORM으로 통일
+
+#### P3. 코드 품질 개선 (Medium)
+
+1) 미사용 코드 제거
+- [x] `AuthProvider` Enum: 미구현 OAuth 값 제거 → `LOCAL`, `KAKAO`, `GOOGLE`만 유지
+- [x] `CastRoleType` Enum: 미사용 `WRITER` 제거 → `DIRECTOR`, `ACTOR`만 유지
+
+2) 하드코딩 데이터 DB화 및 상수 추출
+- [x] `TmdbService` 장르 목록: 하드코딩된 장르 배열 → `GenreRepository` + `GenreTmdbMapping` DB 조회로 동적화
+- [x] `TmdbService` TMDB 이미지 크기, 페이징 제한값, 캐스트 제한 등 매직넘버 → `static final` 상수 추출
+- [x] `WebConfig` RestTemplate 타임아웃 → `application.properties` 설정값으로 외부화
+
+3) JavaScript 구조 개선
+- [x] 5개 JSP의 인라인 `<script>` → 7개 외부 JS 파일로 분리 (`util.js`, `home.js`, `content-detail.js`, `search.js`, `explore.js`, `mypage-edit.js`, `admin.js`)
+- [x] JSP → JS 데이터 전달 방식: `data-*` 속성 활용
+- [x] fetch 에러 핸들링 통일: `MyKino.fetchJson()` 공통 유틸 적용
+
+#### P4. UI 및 스타일 정리 (Low)
+
+1) CSS 변수 도입
+- [x] `common.css`에 `:root` CSS Custom Properties 정의 (색상, 간격, 반경 등)
+- [x] 8개 CSS 파일의 하드코딩 색상값 → CSS 변수로 교체
+
+2) 중복 CSS 제거
+- [x] `.spinner` + `@keyframes spin`: 3곳 중복 → `common.css`로 통합
+- [x] `.btn-primary`: 2곳 중복 → `common.css`로 통합
 
 ### 5-2 그 외 항목
 
 1) 데이터베이스 전환
-- [ ] H2 → MySQL/PostgreSQL로 운영 DB 전환
+- [x] H2 → PostgreSQL (Supabase)로 운영 DB 전환
 - [ ] Redis 캐시 도입으로 TMDB API 호출 최적화
 
-2) 배포 환경 구성
-- [ ] Docker 컨테이너화 및 AWS/GCP 배포
-- [ ] CI/CD 파이프라인 구축
-
-3) 테스트 코드 보강
+2) 테스트 코드 보강
 - [ ] Service 단위 테스트 및 Controller 통합 테스트 작성
-- [ ] TMDB API Mock을 활용한 안정적인 테스트 환경 구축
 
 <br>

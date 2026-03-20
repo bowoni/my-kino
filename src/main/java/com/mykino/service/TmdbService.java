@@ -5,6 +5,7 @@ import com.mykino.enums.CastRoleType;
 import com.mykino.enums.ContentType;
 import com.mykino.repository.CastMemberRepository;
 import com.mykino.repository.ContentRepository;
+import com.mykino.repository.GenreRepository;
 import com.mykino.repository.GenreTmdbMappingRepository;
 import com.mykino.repository.OttPlatformRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class TmdbService {
 
     private final RestTemplate restTemplate;
     private final ContentRepository contentRepository;
+    private final GenreRepository genreRepository;
     private final GenreTmdbMappingRepository genreTmdbMappingRepository;
     private final CastMemberRepository castMemberRepository;
     private final OttPlatformRepository ottPlatformRepository;
@@ -36,6 +38,19 @@ public class TmdbService {
 
     @Value("${tmdb.api.image-base-url}")
     private String imageBaseUrl;
+
+    // TMDB 이미지 크기 상수
+    private static final String IMG_POSTER = "/w500";
+    private static final String IMG_BACKDROP = "/w780";
+    private static final String IMG_BACKDROP_LARGE = "/w1280";
+    private static final String IMG_LOGO = "/w92";
+    private static final String IMG_PROFILE = "/w185";
+
+    // 페이징/필터 상수
+    private static final int MAX_TOTAL_PAGES = 500;
+    private static final int MAX_CAST_MEMBERS = 10;
+    private static final int MIN_VOTE_COUNT = 50;
+    private static final int SEARCH_SYNC_LIMIT = 5;
 
     // =============================================
     // 리스트 API (DB 저장 없이 TMDB 직접 조회)
@@ -83,6 +98,44 @@ public class TmdbService {
     }
 
     /**
+     * 오늘의 추천 (trending/day 랜덤 1편)
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> getTodayPick() {
+        String url = baseUrl + "/trending/all/day?api_key=" + apiKey + "&language=ko-KR&page=1";
+        Map<String, Object> response = restTemplate.getForObject(url, Map.class);
+        List<Map<String, Object>> results = (List<Map<String, Object>>) response.get("results");
+
+        if (results == null || results.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<String, Object> picked = results.get(new Random().nextInt(results.size()));
+        String mediaType = (String) picked.get("media_type");
+        Map<String, Object> item;
+        if ("tv".equals(mediaType)) {
+            item = parseTvItem(picked);
+        } else {
+            item = parseMovieItem(picked);
+        }
+
+        String backdropPath = (String) picked.get("backdrop_path");
+        item.put("backdropUrl", backdropPath != null ? imageBaseUrl + IMG_BACKDROP_LARGE + backdropPath : null);
+        item.put("synopsis", picked.get("overview"));
+
+        return item;
+    }
+
+    /**
+     * 개봉 예정작
+     */
+    public Map<String, Object> getUpcoming(int page) {
+        String url = baseUrl + "/movie/upcoming?api_key=" + apiKey
+                + "&language=ko-KR&region=KR&page=" + (page + 1);
+        return fetchMovieList(url, page, false);
+    }
+
+    /**
      * 통합 Discover (카테고리별 mediaType 지원)
      * @param genre     TMDB 장르 ID (콤마=AND, 파이프=OR), null이면 장르 필터 없음
      * @param mediaType "all"(번갈아), "movie", "tv"
@@ -90,25 +143,27 @@ public class TmdbService {
      * @param page      0-based 페이지
      */
     public Map<String, Object> discover(String genre, String mediaType, String sortBy,
-                                        String provider, int page) {
+                                        String provider, String country, String year,
+                                        String voteMin, String certification, int page) {
         if ("all".equals(mediaType)) {
             int actualPage = page / 2;
             if (page % 2 == 0) {
-                return fetchMovieList(buildDiscoverUrl("movie", genre, sortBy, provider, actualPage), page, true);
+                return fetchMovieList(buildDiscoverUrl("movie", genre, sortBy, provider, country, year, voteMin, certification, actualPage), page, true);
             } else {
                 String tvSort = sortBy.replace("primary_release_date", "first_air_date");
-                return fetchTvList(buildDiscoverUrl("tv", genre, tvSort, provider, actualPage), page, true);
+                return fetchTvList(buildDiscoverUrl("tv", genre, tvSort, provider, country, year, voteMin, null, actualPage), page, true);
             }
         } else if ("movie".equals(mediaType)) {
-            return fetchMovieList(buildDiscoverUrl("movie", genre, sortBy, provider, page), page, false);
+            return fetchMovieList(buildDiscoverUrl("movie", genre, sortBy, provider, country, year, voteMin, certification, page), page, false);
         } else {
             String tvSort = sortBy.replace("primary_release_date", "first_air_date");
-            return fetchTvList(buildDiscoverUrl("tv", genre, tvSort, provider, page), page, false);
+            return fetchTvList(buildDiscoverUrl("tv", genre, tvSort, provider, country, year, voteMin, null, page), page, false);
         }
     }
 
     private String buildDiscoverUrl(String type, String genre, String sortBy,
-                                    String provider, int zeroBasedPage) {
+                                    String provider, String country, String year,
+                                    String voteMin, String certification, int zeroBasedPage) {
         StringBuilder url = new StringBuilder();
         url.append(baseUrl).append("/discover/").append(type)
            .append("?api_key=").append(apiKey)
@@ -124,6 +179,32 @@ public class TmdbService {
         if (provider != null && !provider.isEmpty()) {
             url.append("&with_watch_providers=").append(provider)
                .append("&watch_region=KR");
+        }
+        if (country != null && !country.isEmpty()) {
+            url.append("&with_origin_country=").append(country);
+        }
+        if (year != null && !year.isEmpty()) {
+            String dateField = "movie".equals(type) ? "primary_release_date" : "first_air_date";
+            String yearField = "movie".equals(type) ? "primary_release_year" : "first_air_date_year";
+            if ("2010s".equals(year)) {
+                url.append("&").append(dateField).append(".gte=2010-01-01");
+                url.append("&").append(dateField).append(".lte=2019-12-31");
+            } else if ("2000s".equals(year)) {
+                url.append("&").append(dateField).append(".gte=2000-01-01");
+                url.append("&").append(dateField).append(".lte=2009-12-31");
+            } else if ("~1999".equals(year)) {
+                url.append("&").append(dateField).append(".lte=1999-12-31");
+            } else {
+                url.append("&").append(yearField).append("=").append(year);
+            }
+        }
+        if (voteMin != null && !voteMin.isEmpty()) {
+            url.append("&vote_average.gte=").append(voteMin);
+            url.append("&vote_count.gte=").append(MIN_VOTE_COUNT);
+        }
+        if (certification != null && !certification.isEmpty() && "movie".equals(type)) {
+            url.append("&certification_country=KR");
+            url.append("&certification=").append(certification);
         }
         return url.toString();
     }
@@ -153,7 +234,7 @@ public class TmdbService {
                 Integer providerId = ((Number) provider.get("provider_id")).intValue();
                 String logoPath = (String) provider.get("logo_path");
                 if (logoPath != null) {
-                    logoMap.put(providerId, imageBaseUrl + "/w92" + logoPath);
+                    logoMap.put(providerId, imageBaseUrl + IMG_LOGO + logoPath);
                 }
             }
         }
@@ -164,21 +245,17 @@ public class TmdbService {
      * TMDB 장르 목록 (한글)
      */
     public List<Map<String, Object>> getTmdbGenres() {
-        List<Map<String, Object>> genres = new ArrayList<>();
-        String[] genreNames = {
-            "액션", "애니메이션", "코미디", "범죄", "다큐멘터리", "드라마",
-            "판타지", "역사", "공포", "음악", "미스터리",
-            "로맨스", "SF", "스릴러", "전쟁"
-        };
-        int[] genreIds = {28, 16, 35, 80, 99, 18, 14, 36, 27, 10402, 9648, 10749, 878, 53, 10752};
-
-        for (int i = 0; i < genreIds.length; i++) {
-            Map<String, Object> g = new LinkedHashMap<>();
-            g.put("id", genreIds[i]);
-            g.put("name", genreNames[i]);
-            genres.add(g);
+        List<Map<String, Object>> result = new ArrayList<>();
+        List<Genre> genres = genreRepository.findAll();
+        for (Genre genre : genres) {
+            for (GenreTmdbMapping mapping : genre.getTmdbMappings()) {
+                Map<String, Object> g = new LinkedHashMap<>();
+                g.put("id", mapping.getTmdbGenreId());
+                g.put("name", genre.getName());
+                result.add(g);
+            }
         }
-        return genres;
+        return result;
     }
 
     // =============================================
@@ -201,7 +278,7 @@ public class TmdbService {
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("content", items);
         result.put("number", page);
-        result.put("totalPages", alternating ? Math.min(tmdbTotalPages * 2, 500) : Math.min(tmdbTotalPages, 500));
+        result.put("totalPages", alternating ? Math.min(tmdbTotalPages * 2, MAX_TOTAL_PAGES) : Math.min(tmdbTotalPages, MAX_TOTAL_PAGES));
         result.put("totalElements", ((Number) response.get("total_results")).longValue());
         return result;
     }
@@ -222,7 +299,7 @@ public class TmdbService {
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("content", items);
         result.put("number", page);
-        result.put("totalPages", alternating ? Math.min(tmdbTotalPages * 2, 500) : Math.min(tmdbTotalPages, 500));
+        result.put("totalPages", alternating ? Math.min(tmdbTotalPages * 2, MAX_TOTAL_PAGES) : Math.min(tmdbTotalPages, MAX_TOTAL_PAGES));
         result.put("totalElements", ((Number) response.get("total_results")).longValue());
         return result;
     }
@@ -268,7 +345,7 @@ public class TmdbService {
         }
 
         String posterPath = (String) movie.get("poster_path");
-        item.put("posterUrl", posterPath != null ? imageBaseUrl + "/w500" + posterPath : null);
+        item.put("posterUrl", posterPath != null ? imageBaseUrl + IMG_POSTER + posterPath : null);
         item.put("synopsis", movie.get("overview"));
         item.put("contentType", "영화");
 
@@ -296,7 +373,7 @@ public class TmdbService {
         }
 
         String posterPath = (String) tv.get("poster_path");
-        item.put("posterUrl", posterPath != null ? imageBaseUrl + "/w500" + posterPath : null);
+        item.put("posterUrl", posterPath != null ? imageBaseUrl + IMG_POSTER + posterPath : null);
         item.put("synopsis", tv.get("overview"));
         item.put("contentType", "TV 시리즈");
 
@@ -353,8 +430,8 @@ public class TmdbService {
 
         String posterPath = (String) data.get("poster_path");
         String backdropPath = (String) data.get("backdrop_path");
-        String posterUrl = posterPath != null ? imageBaseUrl + "/w500" + posterPath : null;
-        String backdropUrl = backdropPath != null ? imageBaseUrl + "/w780" + backdropPath : null;
+        String posterUrl = posterPath != null ? imageBaseUrl + IMG_POSTER + posterPath : null;
+        String backdropUrl = backdropPath != null ? imageBaseUrl + IMG_BACKDROP + backdropPath : null;
 
         Double voteAverage = data.get("vote_average") != null
                 ? ((Number) data.get("vote_average")).doubleValue() : null;
@@ -476,8 +553,8 @@ public class TmdbService {
 
         String posterPath = (String) data.get("poster_path");
         String backdropPath = (String) data.get("backdrop_path");
-        String posterUrl = posterPath != null ? imageBaseUrl + "/w500" + posterPath : null;
-        String backdropUrl = backdropPath != null ? imageBaseUrl + "/w780" + backdropPath : null;
+        String posterUrl = posterPath != null ? imageBaseUrl + IMG_POSTER + posterPath : null;
+        String backdropUrl = backdropPath != null ? imageBaseUrl + IMG_BACKDROP + backdropPath : null;
 
         Double voteAverage = data.get("vote_average") != null
                 ? ((Number) data.get("vote_average")).doubleValue() : null;
@@ -567,7 +644,7 @@ public class TmdbService {
             return result;
         }
 
-        int limit = Math.min(5, movies.size());
+        int limit = Math.min(SEARCH_SYNC_LIMIT, movies.size());
         int saved = 0, skipped = 0;
         List<String> savedTitles = new ArrayList<>();
         List<String> errors = new ArrayList<>();
@@ -642,7 +719,7 @@ public class TmdbService {
 
         List<Map<String, Object>> cast = (List<Map<String, Object>>) credits.get("cast");
         if (cast != null) {
-            int limit = Math.min(10, cast.size());
+            int limit = Math.min(MAX_CAST_MEMBERS, cast.size());
             for (int i = 0; i < limit; i++) {
                 Map<String, Object> person = cast.get(i);
                 CastMember actor = findOrCreateCastMember(person);
@@ -715,7 +792,7 @@ public class TmdbService {
 
                     String profilePath = (String) person.get("profile_path");
                     String profileImage = profilePath != null
-                            ? imageBaseUrl + "/w185" + profilePath : null;
+                            ? imageBaseUrl + IMG_PROFILE + profilePath : null;
 
                     CastMember cm = CastMember.builder()
                             .name(name)

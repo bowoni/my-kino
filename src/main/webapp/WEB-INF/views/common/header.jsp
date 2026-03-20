@@ -6,8 +6,20 @@
     <div class="header-inner">
         <a href="/" class="logo">MyKino</a>
 
-        <nav class="nav">
+        <div class="header-right">
             <a href="/search" class="nav-link nav-search" aria-label="검색">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+            </a>
+            <button class="menu-toggle" id="menuToggle" aria-label="메뉴">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+
+        <nav class="nav" id="navMenu">
+            <a href="/search" class="nav-link nav-search nav-search-desktop" aria-label="검색">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"/>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -31,3 +43,15 @@
         </nav>
     </div>
 </header>
+<script>
+(function() {
+    var toggle = document.getElementById('menuToggle');
+    var nav = document.getElementById('navMenu');
+    if (toggle && nav) {
+        toggle.addEventListener('click', function() {
+            toggle.classList.toggle('active');
+            nav.classList.toggle('open');
+        });
+    }
+})();
+</script>

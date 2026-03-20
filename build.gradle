@@ -26,6 +26,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // JSP + JSTL
@@ -35,14 +36,11 @@ dependencies {
     // Spring Security JSP Tag Library
     implementation 'org.springframework.security:spring-security-taglibs'
 
-    // MyBatis
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.2'
+    // PostgreSQL (Supabase)
+    runtimeOnly 'org.postgresql:postgresql'
 
-    // H2 Database
-    runtimeOnly 'com.h2database:h2'
-
-    // MySQL (나중에 전환 시 주석 해제)
-    // runtimeOnly 'com.mysql:mysql-connector-j'
+    // H2 (테스트 전용)
+    testRuntimeOnly 'com.h2database:h2'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'

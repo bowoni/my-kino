@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><c:if test="${not empty keyword}">${keyword} - </c:if>검색 - MyKino</title>
+    <title><c:if test="${not empty keyword}"><c:out value="${keyword}"/> - </c:if>검색 - MyKino</title>
     <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="/css/search.css">
 </head>
@@ -17,7 +17,7 @@
         <!-- 검색바 -->
         <div class="search-bar">
             <form class="search-form" id="searchForm">
-                <input type="text" value="${q}" placeholder="영화, 드라마 제목을 검색하세요"
+                <input type="text" value="${fn:escapeXml(q)}" placeholder="영화, 드라마 제목을 검색하세요"
                        id="searchInput" autocomplete="off">
                 <button type="submit" class="search-btn">검색</button>
             </form>
@@ -27,7 +27,7 @@
         <!-- 검색 결과 -->
         <c:if test="${not empty keyword}">
             <div class="search-info">
-                <h2>'<span class="highlight">${keyword}</span>' 검색 결과</h2>
+                <h2>'<span class="highlight"><c:out value="${keyword}"/></span>' 검색 결과</h2>
                 <c:if test="${not empty results}">
                     <p class="result-count">총 ${results.totalElements}건</p>
                 </c:if>
@@ -69,7 +69,7 @@
 
                     <!-- 페이징 -->
                     <c:if test="${results.totalPages > 1}">
-                        <div class="pagination" id="pagination" data-keyword="${q}">
+                        <div class="pagination" id="pagination" data-keyword="${fn:escapeXml(q)}">
                             <c:if test="${results.number > 0}">
                                 <a href="#" data-page="${results.number - 1}" class="page-btn">&laquo; 이전</a>
                             </c:if>
@@ -94,7 +94,7 @@
                 <c:otherwise>
                     <div class="no-results">
                         <p class="no-results-icon">:(</p>
-                        <p class="no-results-text">'${keyword}'에 대한 검색 결과가 없습니다.</p>
+                        <p class="no-results-text">'<c:out value="${keyword}"/>'에 대한 검색 결과가 없습니다.</p>
                         <p class="no-results-hint">다른 검색어로 시도해보세요.</p>
                     </div>
                 </c:otherwise>
@@ -111,85 +111,7 @@
 
     <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 
-    <script>
-        var searchInput = document.getElementById('searchInput');
-        var autocompleteList = document.getElementById('autocompleteList');
-        var debounceTimer;
-
-        searchInput.addEventListener('input', function() {
-            clearTimeout(debounceTimer);
-            var query = this.value.trim();
-
-            if (query.length < 1) {
-                autocompleteList.style.display = 'none';
-                return;
-            }
-
-            debounceTimer = setTimeout(function() {
-                fetch('/api/public/autocomplete?q=' + encodeURIComponent(query))
-                    .then(function(res) { return res.json(); })
-                    .then(function(data) {
-                        if (data.length === 0) {
-                            autocompleteList.style.display = 'none';
-                            return;
-                        }
-
-                        var html = '';
-                        for (var i = 0; i < data.length; i++) {
-                            var item = data[i];
-                            var poster = item.posterUrl
-                                ? '<img src="' + item.posterUrl + '" alt="">'
-                                : '<span class="ac-no-img">' + item.title.substring(0, 1) + '</span>';
-
-                            html += '<a href="/content/tmdb/' + item.tmdbId + '?type=' + (item.mediaType || 'movie') + '" class="ac-item">'
-                                + '<div class="ac-poster">' + poster + '</div>'
-                                + '<div class="ac-info">'
-                                + '<div class="ac-title">' + item.title + '</div>'
-                                + '<div class="ac-meta">' + (item.releaseYear || '') + ' · ' + item.contentType + '</div>'
-                                + '</div></a>';
-                        }
-                        autocompleteList.innerHTML = html;
-                        autocompleteList.style.display = 'block';
-                    });
-            }, 300);
-        });
-
-        // 바깥 클릭 시 자동완성 닫기
-        document.addEventListener('click', function(e) {
-            if (!searchInput.contains(e.target) && !autocompleteList.contains(e.target)) {
-                autocompleteList.style.display = 'none';
-            }
-        });
-
-        // 포커스 시 자동완성 다시 표시
-        searchInput.addEventListener('focus', function() {
-            if (autocompleteList.innerHTML.trim() !== '' && this.value.trim().length >= 1) {
-                autocompleteList.style.display = 'block';
-            }
-        });
-
-        // 폼 제출 시 %20 인코딩 적용
-        document.getElementById('searchForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            var q = searchInput.value.trim();
-            if (q.length > 0) {
-                location.href = '/search?q=' + encodeURIComponent(q);
-            }
-        });
-
-        // 페이징 클릭 시 %20 인코딩 적용
-        var pagination = document.getElementById('pagination');
-        if (pagination) {
-            pagination.addEventListener('click', function(e) {
-                var link = e.target.closest('a[data-page]');
-                if (link) {
-                    e.preventDefault();
-                    var keyword = pagination.getAttribute('data-keyword');
-                    var page = link.getAttribute('data-page');
-                    location.href = '/search?q=' + encodeURIComponent(keyword) + '&page=' + page;
-                }
-            });
-        }
-    </script>
+    <script src="/js/util.js"></script>
+    <script src="/js/search.js"></script>
 </body>
 </html>

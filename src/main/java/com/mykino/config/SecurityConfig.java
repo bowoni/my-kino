@@ -3,6 +3,7 @@ package com.mykino.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,10 +12,12 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -25,7 +28,8 @@ public class SecurityConfig {
             .authorizeRequests()
                 .antMatchers("/", "/search/**", "/content/**", "/explore/**",
                              "/login", "/signup",
-                             "/h2-console/**", "/css/**", "/js/**", "/images/**",
+                             "/oauth2/**", "/login/oauth2/**",
+                             "/css/**", "/js/**", "/images/**", "/uploads/**",
                              "/api/public/**", "/api/review/content/**").permitAll()
                 .antMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
@@ -38,6 +42,14 @@ public class SecurityConfig {
                 .defaultSuccessUrl("/", true)
                 .failureUrl("/login?error=true")
                 .permitAll()
+            .and()
+            .oauth2Login()
+                .loginPage("/login")
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/login?error=true")
+                .userInfoEndpoint()
+                    .userService(customOAuth2UserService)
+                .and()
             .and()
             .logout()
                 .logoutUrl("/logout")

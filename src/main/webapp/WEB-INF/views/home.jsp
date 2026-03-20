@@ -28,143 +28,50 @@
         </div>
 
         <sec:authorize access="isAuthenticated()">
-            <div class="welcome-section">
-                <h2>${user.nickname}님, 환영합니다!</h2>
-                <p>오늘은 어떤 콘텐츠를 감상하시겠어요?</p>
+            <!-- 내가 찜한 콘텐츠 -->
+            <div class="home-section" id="myWatchlistSection" style="display:none;">
+                <h2 class="home-section-title">내가 찜한 콘텐츠</h2>
+                <div class="horizontal-scroll" id="myWatchlistScroll"></div>
             </div>
         </sec:authorize>
 
-        <!-- 인기 콘텐츠 (TMDB 무한스크롤) -->
-        <div class="home-section">
-            <h2 class="home-section-title">인기 콘텐츠</h2>
-            <div class="content-grid" id="popularGrid"></div>
-            <div class="loading-indicator" id="popularLoading" style="display:none;">
-                <div class="spinner"></div>
+        <!-- 오늘 이거? -->
+        <div class="home-section" id="todayPickSection" style="display:none;">
+            <div class="section-header">
+                <h2 class="home-section-title">오늘 이거?</h2>
+                <button class="refresh-btn" id="todayPickRefresh" title="다른 추천">&#8635;</button>
             </div>
+            <div class="today-pick-card" id="todayPickCard"></div>
         </div>
 
-        <!-- 현재 상영중 -->
-        <div class="home-section">
-            <h2 class="home-section-title">현재 상영중</h2>
-            <div class="content-grid" id="nowPlayingGrid"></div>
-            <div class="loading-indicator" id="nowPlayingLoading" style="display:none;">
-                <div class="spinner"></div>
-            </div>
+        <!-- 인기 콘텐츠 -->
+        <div class="home-section" id="popularSection" style="display:none;">
+            <h2 class="home-section-title">인기 콘텐츠</h2>
+            <div class="horizontal-scroll" id="popularScroll"></div>
+        </div>
+
+        <!-- 신작 콘텐츠 -->
+        <div class="home-section" id="nowPlayingSection" style="display:none;">
+            <h2 class="home-section-title">신작 콘텐츠</h2>
+            <div class="horizontal-scroll" id="nowPlayingScroll"></div>
+        </div>
+
+        <!-- 개봉 예정작 -->
+        <div class="home-section" id="upcomingSection" style="display:none;">
+            <h2 class="home-section-title">개봉 예정작</h2>
+            <div class="horizontal-scroll" id="upcomingScroll"></div>
+        </div>
+
+        <!-- 최신 리뷰 한줄평 -->
+        <div class="home-section" id="latestReviewsSection" style="display:none;">
+            <h2 class="home-section-title">최신 리뷰 한줄평</h2>
+            <div class="horizontal-scroll" id="latestReviewScroll"></div>
         </div>
     </div>
 
     <%@ include file="/WEB-INF/views/common/footer.jsp" %>
 
-    <script>
-        var heroInput = document.getElementById('heroSearchInput');
-        var heroAC = document.getElementById('heroAutocomplete');
-        var timer;
-
-        heroInput.addEventListener('input', function() {
-            clearTimeout(timer);
-            var q = this.value.trim();
-            if (q.length < 1) { heroAC.style.display = 'none'; return; }
-
-            timer = setTimeout(function() {
-                fetch('/api/public/autocomplete?q=' + encodeURIComponent(q))
-                    .then(function(r) { return r.json(); })
-                    .then(function(data) {
-                        if (data.length === 0) { heroAC.style.display = 'none'; return; }
-                        var h = '';
-                        for (var i = 0; i < data.length; i++) {
-                            var d = data[i];
-                            var img = d.posterUrl
-                                ? '<img src="' + d.posterUrl + '">'
-                                : '<span>' + d.title.substring(0,1) + '</span>';
-                            h += '<a href="/content/tmdb/' + d.tmdbId + '?type=' + (d.mediaType || 'movie') + '" class="hero-ac-item">'
-                                + '<div class="hero-ac-poster">' + img + '</div>'
-                                + '<div class="hero-ac-info"><div class="hero-ac-title">' + d.title + '</div>'
-                                + '<div class="hero-ac-meta">' + (d.releaseYear||'') + ' · ' + d.contentType + '</div></div></a>';
-                        }
-                        heroAC.innerHTML = h;
-                        heroAC.style.display = 'block';
-                    });
-            }, 300);
-        });
-
-        document.addEventListener('click', function(e) {
-            if (!heroInput.contains(e.target) && !heroAC.contains(e.target)) {
-                heroAC.style.display = 'none';
-            }
-        });
-
-        // 폼 제출 시 %20 인코딩 적용
-        document.getElementById('heroSearchForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            var q = heroInput.value.trim();
-            if (q.length > 0) {
-                location.href = '/search?q=' + encodeURIComponent(q);
-            }
-        });
-
-        // 무한스크롤 로직
-        function createInfiniteScroll(gridId, loadingId, apiUrl) {
-            var grid = document.getElementById(gridId);
-            var loading = document.getElementById(loadingId);
-            var page = 0;
-            var isLoading = false;
-            var hasMore = true;
-
-            function renderCard(item) {
-                var poster = item.posterUrl
-                    ? '<img src="' + item.posterUrl + '" alt="' + item.title + '">'
-                    : '<span>' + item.title.substring(0, 4) + '</span>';
-                var score = item.voteAverage
-                    ? '<div class="card-score tmdb-score">' + item.voteAverage + '</div>'
-                    : '';
-                return '<a href="/content/tmdb/' + item.tmdbId + '?type=' + (item.mediaType || 'movie') + '" class="content-card">'
-                    + '<div class="card-poster">' + poster + score + '</div>'
-                    + '<div class="card-title">' + item.title + '</div>'
-                    + '<div class="card-year">' + (item.releaseYear || '') + ' · ' + item.contentType + '</div>'
-                    + '</a>';
-            }
-
-            function loadMore() {
-                if (isLoading || !hasMore) return;
-                isLoading = true;
-                loading.style.display = 'flex';
-
-                fetch(apiUrl + '?page=' + page)
-                    .then(function(r) { return r.json(); })
-                    .then(function(data) {
-                        var items = data.content;
-                        var html = '';
-                        for (var i = 0; i < items.length; i++) {
-                            html += renderCard(items[i]);
-                        }
-                        grid.insertAdjacentHTML('beforeend', html);
-                        page++;
-                        hasMore = page < data.totalPages;
-                        isLoading = false;
-                        loading.style.display = 'none';
-                    })
-                    .catch(function() {
-                        isLoading = false;
-                        loading.style.display = 'none';
-                    });
-            }
-
-            // 첫 페이지 로드
-            loadMore();
-
-            return { loadMore: loadMore, getGrid: function() { return grid; } };
-        }
-
-        var popularScroll = createInfiniteScroll('popularGrid', 'popularLoading', '/api/public/tmdb/popular');
-        var nowPlayingScroll = createInfiniteScroll('nowPlayingGrid', 'nowPlayingLoading', '/api/public/tmdb/now-playing');
-
-        // 스크롤 이벤트
-        window.addEventListener('scroll', function() {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
-                popularScroll.loadMore();
-                nowPlayingScroll.loadMore();
-            }
-        });
-    </script>
+    <script src="/js/util.js"></script>
+    <script src="/js/home.js"></script>
 </body>
 </html>
