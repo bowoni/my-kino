@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 리뷰 - MyKino</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/profile.css">
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <script th:replace="~{fragments/header :: headerScript}"></script>
+
+    <div class="main-content">
+        <h1 class="page-title">내 리뷰</h1>
+
+        <div th:if="${!reviews.content.isEmpty()}">
+            <div class="mypage-review-list">
+                <a th:each="review : ${reviews.content}"
+                   th:href="|/content/${review.content.id}|"
+                   class="mypage-review-card">
+                    <div class="mypage-review-poster">
+                        <img th:if="${review.content.posterUrl != null and !review.content.posterUrl.isEmpty()}"
+                             th:src="${review.content.posterUrl}"
+                             th:alt="${review.content.title}">
+                    </div>
+                    <div class="mypage-review-body">
+                        <div class="mypage-review-content-title" th:text="${review.content.title}">제목</div>
+                        <span class="spoiler-tag" th:if="${review.hasSpoiler}">스포일러</span>
+                        <p class="mypage-review-text" th:text="${review.body}">리뷰 본문</p>
+                        <div class="mypage-review-meta"
+                             th:text="${#temporals.format(review.createdAt, 'yyyy.MM.dd')}">2026.04.23</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="pagination" th:if="${reviews.totalPages > 1}">
+                <a th:each="i : ${#numbers.sequence(0, reviews.totalPages - 1)}"
+                   th:href="|/mypage/reviews?page=${i}|"
+                   th:classappend="${reviews.number == i} ? 'active' : ''"
+                   class="page-link"
+                   th:text="${i + 1}">1</a>
+            </div>
+        </div>
+
+        <div class="empty-state" th:if="${reviews.content.isEmpty()}">
+            <p>작성한 리뷰가 없습니다.</p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

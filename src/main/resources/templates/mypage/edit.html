@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로필 수정 - MyKino</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/profile.css">
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <script th:replace="~{fragments/header :: headerScript}"></script>
+
+    <div class="main-content">
+        <h1 class="page-title">프로필 수정</h1>
+
+        <div class="profile-card">
+            <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+            <div class="alert alert-success" th:if="${success}" th:text="${success}"></div>
+
+            <form action="/mypage/edit" method="post" enctype="multipart/form-data" class="edit-form">
+                <div class="edit-avatar-section">
+                    <div class="edit-avatar" id="avatarPreview">
+                        <img th:if="${user.profileImage != null and !user.profileImage.isEmpty()}"
+                             th:src="${user.profileImage}" alt="프로필" id="avatarImg">
+                        <span th:unless="${user.profileImage != null and !user.profileImage.isEmpty()}"
+                              id="avatarInitial" th:text="${#strings.substring(user.nickname, 0, 1)}">N</span>
+                    </div>
+                    <label for="profileImageFile" class="edit-avatar-btn">사진 변경</label>
+                    <input type="file" id="profileImageFile" name="profileImageFile"
+                           accept="image/*" style="display:none;">
+                </div>
+
+                <div class="edit-group">
+                    <label class="edit-label" for="nickname">닉네임</label>
+                    <input type="text" id="nickname" name="nickname" class="edit-input"
+                           th:value="${user.nickname}"
+                           placeholder="2~10자로 입력하세요" required>
+                    <span id="nicknameHint" class="edit-hint"></span>
+                </div>
+
+                <div class="edit-group">
+                    <label class="edit-label" for="bio">자기소개</label>
+                    <textarea id="bio" name="bio" class="edit-textarea"
+                              rows="3" maxlength="200"
+                              placeholder="자기소개를 입력하세요 (최대 200자)"
+                              th:text="${user.bio}"></textarea>
+                    <span class="edit-char-count">
+                        <span id="bioCount" th:text="${user.bio != null ? #strings.length(user.bio) : 0}">0</span>/200
+                    </span>
+                </div>
+
+                <div class="edit-group">
+                    <label class="edit-label">이메일</label>
+                    <input type="text" class="edit-input edit-readonly" th:value="${user.email}" readonly>
+                </div>
+
+                <div class="edit-group">
+                    <label class="edit-label">가입 방식</label>
+                    <input type="text" class="edit-input edit-readonly" th:value="${user.provider}" readonly>
+                </div>
+
+                <button type="submit" class="btn-primary edit-submit">저장하기</button>
+            </form>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="/js/util.js"></script>
+    <script src="/js/mypage-edit.js"></script>
+</body>
+</html>

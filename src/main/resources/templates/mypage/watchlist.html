@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 콘텐츠 - MyKino</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/profile.css">
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <script th:replace="~{fragments/header :: headerScript}"></script>
+
+    <div class="main-content">
+        <h1 class="page-title">내 콘텐츠</h1>
+
+        <div class="watchlist-tabs">
+            <a href="/mypage/watchlist?status=WANT_TO_WATCH"
+               th:classappend="${currentStatus == 'WANT_TO_WATCH'} ? 'active' : ''"
+               class="watchlist-tab">
+                찜했어요 <span class="tab-count" th:text="${wantCount}">0</span>
+            </a>
+            <a href="/mypage/watchlist?status=WATCHING"
+               th:classappend="${currentStatus == 'WATCHING'} ? 'active' : ''"
+               class="watchlist-tab">
+                보는중 <span class="tab-count" th:text="${watchingCount}">0</span>
+            </a>
+            <a href="/mypage/watchlist?status=WATCHED"
+               th:classappend="${currentStatus == 'WATCHED'} ? 'active' : ''"
+               class="watchlist-tab">
+                봤어요 <span class="tab-count" th:text="${watchedCount}">0</span>
+            </a>
+        </div>
+
+        <div class="watchlist-grid" th:if="${!items.isEmpty()}">
+            <a th:each="item : ${items}"
+               th:href="|/content/${item.content.id}|"
+               class="content-card">
+                <div class="card-poster">
+                    <img th:if="${item.content.posterUrl != null and !item.content.posterUrl.isEmpty()}"
+                         th:src="${item.content.posterUrl}"
+                         th:alt="${item.content.title}">
+                    <span th:unless="${item.content.posterUrl != null and !item.content.posterUrl.isEmpty()}"
+                          th:text="${#strings.abbreviate(item.content.title, 4)}">title</span>
+                </div>
+                <div class="card-title" th:text="${item.content.title}">제목</div>
+                <div class="card-year">
+                    <span th:text="${item.content.releaseYear}">2026</span> ·
+                    <span th:text="${item.content.contentType}">MOVIE</span>
+                </div>
+            </a>
+        </div>
+
+        <div class="empty-state" th:if="${items.isEmpty()}">
+            <p>아직 콘텐츠가 없습니다.</p>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

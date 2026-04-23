@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${keyword != null and !keyword.isEmpty()} ? ${keyword} + ' - 검색 - MyKino' : '검색 - MyKino'">검색 - MyKino</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/search.css">
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <script th:replace="~{fragments/header :: headerScript}"></script>
+
+    <div class="main-content">
+        <div class="search-tabs">
+            <button class="search-tab active" data-tab="search">콘텐츠 검색</button>
+            <button class="search-tab" data-tab="ai">AI 추천/질문</button>
+        </div>
+
+        <div class="tab-content active" id="tab-search">
+            <div class="search-bar">
+                <form class="search-form" id="searchForm">
+                    <input type="text" th:value="${q}" placeholder="영화, 드라마 제목을 검색하세요"
+                           id="searchInput" autocomplete="off">
+                    <button type="submit" class="search-btn">검색</button>
+                </form>
+                <div class="autocomplete-list" id="autocompleteList"></div>
+            </div>
+
+            <div th:if="${keyword != null and !keyword.isEmpty()}">
+                <div class="search-info">
+                    <h2>'<span class="highlight" th:text="${keyword}">키워드</span>' 검색 결과</h2>
+                    <p class="result-count" th:if="${results != null}">
+                        총 <span th:text="${results.totalElements}">0</span>건
+                    </p>
+                </div>
+
+                <div th:if="${results != null and results.totalElements > 0}">
+                    <div class="search-grid">
+                        <a th:each="item : ${results.content}"
+                           th:href="|/content/tmdb/${item.tmdbId}?type=${item.mediaType}|"
+                           class="search-card">
+                            <div class="card-poster">
+                                <img th:if="${item.posterUrl != null and !item.posterUrl.isEmpty()}"
+                                     th:src="${item.posterUrl}" th:alt="${item.title}">
+                                <span th:unless="${item.posterUrl != null and !item.posterUrl.isEmpty()}"
+                                      th:text="${#strings.abbreviate(item.title, 4)}">title</span>
+                            </div>
+                            <div class="card-info">
+                                <div class="card-title" th:text="${item.title}">제목</div>
+                                <div class="card-title-eng"
+                                     th:if="${item.titleEng != null and !item.titleEng.isEmpty()}"
+                                     th:text="${item.titleEng}">English title</div>
+                                <div class="card-meta">
+                                    <span th:if="${item.releaseYear != null}" th:text="${item.releaseYear}">2026</span>
+                                    <span th:text="${item.contentType}">MOVIE</span>
+                                </div>
+                                <div class="card-synopsis"
+                                     th:if="${item.synopsis != null and !item.synopsis.isEmpty()}"
+                                     th:text="${#strings.abbreviate(item.synopsis, 80)}">synopsis</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="pagination" id="pagination" th:attr="data-keyword=${q}" th:if="${results.totalPages > 1}">
+                        <a href="#" class="page-btn" th:if="${results.number > 0}"
+                           th:attr="data-page=${results.number - 1}">&laquo; 이전</a>
+
+                        <th:block th:each="i : ${#numbers.sequence(0, results.totalPages - 1)}">
+                            <span class="page-btn active" th:if="${i == results.number}" th:text="${i + 1}">1</span>
+                            <a href="#" class="page-btn" th:unless="${i == results.number}"
+                               th:attr="data-page=${i}" th:text="${i + 1}">1</a>
+                        </th:block>
+
+                        <a href="#" class="page-btn" th:if="${results.number < results.totalPages - 1}"
+                           th:attr="data-page=${results.number + 1}">다음 &raquo;</a>
+                    </div>
+                </div>
+
+                <div class="no-results" th:if="${results == null or results.totalElements == 0}">
+                    <p class="no-results-icon">:(</p>
+                    <p class="no-results-text">'<span th:text="${keyword}">키워드</span>'에 대한 검색 결과가 없습니다.</p>
+                    <p class="no-results-hint">다른 검색어로 시도해보세요.</p>
+                </div>
+            </div>
+
+            <div class="search-empty" th:if="${keyword == null or keyword.isEmpty()}">
+                <p>영화나 드라마 제목을 검색해보세요.</p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-ai">
+            <div class="ai-chat-container">
+                <div class="ai-chat-messages" id="aiChatMessages">
+                    <div class="ai-message ai-welcome">
+                        <div class="ai-avatar">AI</div>
+                        <div class="ai-bubble">
+                            안녕하세요! 영화/드라마 AI 어시스턴트입니다.<br>
+                            무엇이든 물어보세요. 추천, 줄거리, 배우 정보 등 도움을 드릴게요.
+                        </div>
+                    </div>
+                </div>
+                <div class="ai-chat-input-area">
+                    <form class="ai-chat-form" id="aiChatForm">
+                        <input type="text" id="aiChatInput" placeholder="영화/드라마에 대해 질문해보세요..." autocomplete="off">
+                        <button type="submit" class="ai-send-btn" id="aiSendBtn">전송</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script src="/js/util.js"></script>
+    <script src="/js/search.js"></script>
+    <script src="/js/ai-chat.js"></script>
+</body>
+</html>

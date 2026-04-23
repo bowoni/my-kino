@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 - MyKino</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/profile.css">
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <script th:replace="~{fragments/header :: headerScript}"></script>
+
+    <div class="main-content">
+        <h1 class="page-title">마이페이지</h1>
+
+        <div class="profile-card">
+            <a href="/mypage/edit" class="profile-header-link">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <img th:if="${user.profileImage != null and !user.profileImage.isEmpty()}"
+                             th:src="${user.profileImage}" alt="프로필">
+                        <span th:unless="${user.profileImage != null and !user.profileImage.isEmpty()}"
+                              th:text="${#strings.substring(user.nickname, 0, 1)}">N</span>
+                    </div>
+                    <div class="profile-header-info">
+                        <div class="profile-name" th:text="${user.nickname}">닉네임</div>
+                        <div class="profile-email" th:text="${user.email}">email@example.com</div>
+                    </div>
+                    <span class="profile-chevron">&#8250;</span>
+                </div>
+            </a>
+
+            <div class="watch-stats">
+                <a href="/mypage/watchlist?status=WANT_TO_WATCH" class="watch-stat-item">
+                    <span class="watch-stat-count" th:text="${wantCount}">0</span>
+                    <span class="watch-stat-label">찜했어요</span>
+                </a>
+                <a href="/mypage/watchlist?status=WATCHING" class="watch-stat-item">
+                    <span class="watch-stat-count" th:text="${watchingCount}">0</span>
+                    <span class="watch-stat-label">보는중</span>
+                </a>
+                <a href="/mypage/watchlist?status=WATCHED" class="watch-stat-item">
+                    <span class="watch-stat-count" th:text="${watchedCount}">0</span>
+                    <span class="watch-stat-label">봤어요</span>
+                </a>
+            </div>
+
+            <a href="/mypage/reviews" class="review-stat-row">
+                <span>작성한 리뷰 <strong th:text="${reviewCount}">0</strong>개</span>
+                <span class="profile-chevron">&#8250;</span>
+            </a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
